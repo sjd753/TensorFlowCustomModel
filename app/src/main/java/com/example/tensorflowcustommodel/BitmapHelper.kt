@@ -133,11 +133,6 @@ object BitmapHelper {
     fun drawBitmapByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
         if (array.isEmpty() || array.size != 8) throw IllegalArgumentException("float array must contain 8 elements")
 
-        //        compositeImageView = (ImageView) findViewById (R.id.imageView);
-        //
-        //        Bitmap bitmap1 = BitmapFactory . decodeResource (getResources(), R.drawable.batman_ad);
-        //        Bitmap bitmap2 = BitmapFactory . decodeResource (getResources(), R.drawable.logo);
-        //
         val resultingImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
         //
         val canvas = Canvas(resultingImage)
@@ -181,6 +176,23 @@ object BitmapHelper {
 
 //        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
 //        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        return resultingImage
+    }
+
+    fun drawMergedBitmap(source: Bitmap, overlay: Bitmap): Bitmap {
+        if (overlay.width > source.width || overlay.height > source.height) throw IllegalArgumentException(
+            "overlay bitmap must be smaller than source bitmap"
+        )
+
+        val resultingImage = Bitmap.createBitmap(source.width, source.height, source.config)
+        //
+        val canvas = Canvas(resultingImage)
+        //
+        // val paint = Paint()
+        // paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
+        canvas.drawBitmap(source, 0f, 0f, null)
+        canvas.drawBitmap(overlay, 0f, 0f, null)
 
         return resultingImage
     }

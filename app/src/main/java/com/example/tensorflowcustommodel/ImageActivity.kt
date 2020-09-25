@@ -1,19 +1,27 @@
 package com.example.tensorflowcustommodel
 
-//import io.reactivex.functions.Consumer
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.tensorflowcustommodel.Keys.DIM_IMG_SIZE_X
-import com.example.tensorflowcustommodel.Keys.DIM_IMG_SIZE_Y
+import com.github.buchandersenn.android_permission_manager.PermissionManager
+import com.github.buchandersenn.android_permission_manager.PermissionRequest
+import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
 import kotlinx.android.synthetic.main.activity_image.*
 import java.io.FileNotFoundException
 
 class ImageActivity : AppCompatActivity() {
 
+    companion object {
+        private val TAG: String = ImageActivity::class.java.simpleName
+    }
+
+    private val permissionManager = PermissionManager.create(this)
     private val CHOOSE_IMAGE = 1001
     private val CHOOSE_CAMERA = 1002
     private lateinit var photoImage: Bitmap
@@ -35,12 +43,67 @@ class ImageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        requestStoragePermission()
+    }
+
+    private fun requestStoragePermission() {
+        // Start building a new request using the with() method.
+        // The method takes either a single permission or a list of permissions.
+        // Specify multiple permissions in case you need to request both
+        // read and write access to the contacts at the same time, for example.
+        permissionManager.with(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+            // Optionally, specify a callback handler for all three callbacks
+            .onCallback(object : OnPermissionCallback {
+                override fun onPermissionShowRationale(permissionRequest: PermissionRequest) {
+                    Log.i(TAG, "storage permission show rationale")
+                    AlertDialog.Builder(this@ImageActivity).apply {
+                        setMessage("Storage permission is required")
+                        setCancelable(false)
+                        setPositiveButton("OK") { dialog, which ->
+                            permissionRequest.acceptPermissionRationale()
+                        }
+                    }.show()
+                }
+
+                override fun onPermissionGranted() {
+                    Log.i(TAG, "storage permission granted")
+                }
+
+                override fun onPermissionDenied() {
+                    Log.i(TAG, "storage permission denied")
+                    AlertDialog.Builder(this@ImageActivity).setTitle("Permission Denied")
+                        .setMessage("Enable storage permission from settings app")
+                        .setCancelable(false)
+                        .setPositiveButton("Ok") { _, _ ->
+                            finish()
+                        }
+                        .setNegativeButton("CANCEL") { _, _ -> finish() }.show()
+                }
+            })
+            // Finally, perform the request
+            .request()
+    }
+
     private fun choosePicture() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         startActivityForResult(intent, CHOOSE_IMAGE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        permissionManager.handlePermissionResult(requestCode, grantResults)
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -57,8 +120,9 @@ class ImageActivity : AppCompatActivity() {
 //                classifier.getOutput(this@ImageActivity,photoImage)
 //                val bitmap = classifier.getModelOutput(photoImage)
                 val floatArray = classifier.getOutput(this@ImageActivity, photoImage)
-                val drawnBitmap = BitmapHelper.drawBitmapByPoints(photoImage,floatArray)
-                imageResult.setImageBitmap(drawnBitmap)
+                val drawnBitmap = BitmapHelper.drawBitmapByPoints(photoImage, floatArray)
+                val mergedBitmap = BitmapHelper.drawMergedBitmap(photoImage, drawnBitmap)
+                imageResult.setImageBitmap(mergedBitmap)
 //                 val bitmap = classifier.getOutputImage(byteBuffer)
 //                val tensorImage = TensorImage.fromBitmap(bitmap)
 //                 imageResult.setImageBitmap(bitmap)

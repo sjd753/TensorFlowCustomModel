@@ -1,8 +1,10 @@
 package com.example.tensorflowcustommodel
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,7 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.wonderkiln.camerakit.*
+import com.wonderkiln.camerakit.CameraKit
 import kotlinx.android.synthetic.main.fragment_camera_preview.*
 import kotlinx.android.synthetic.main.fragment_camera_preview.view.*
 
@@ -34,6 +36,8 @@ class CameraPreviewFragment : Fragment() {
     //    private var mFrameRect: RectF? = null
     private var photoPath: String = ""
     private var guideTogglePortrait = true
+    private lateinit var rawBitmap: Bitmap
+    private lateinit var drawnLinesBitmap: Bitmap
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,8 +57,9 @@ class CameraPreviewFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_camera_preview, container, false)
 
         view.cameraView.setFocus(CameraKit.Constants.FOCUS_CONTINUOUS)
+        view.cameraView.setMethod(CameraKit.Constants.METHOD_STILL)
 
-        view.viewCropToggle.performClick()
+//        view.viewCropToggle.performClick()
 //        view.viewCropToggle.setOnClickListener {
 //            if (guideTogglePortrait) {
 //                ivGuidelineDynamic.visibility = View.GONE
@@ -72,27 +77,39 @@ class CameraPreviewFragment : Fragment() {
 
         view.cameraView.setFocus(CameraKit.Constants.FOCUS_TAP_WITH_MARKER)
         view.btn_capture.setOnClickListener {
-            cameraView.captureImage { cameraKitImage ->
+            if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::drawnLinesBitmap.isInitialized && !drawnLinesBitmap.isRecycled) {
+                val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+                try {
+                    val photoFile = BitmapHelper.bitmapToFile(
+                        mergedBitmap,
+                        AppFileManager.makeAppDir(context!!.getString(R.string.app_name))!!,
+                        false
+                    )
+                    Log.e(TAG, "photoFile saved: ${photoFile.absolutePath}")
+                    photoPath = photoFile.absolutePath
+                    activity.setResult(
+                        Activity.RESULT_OK,
+                        Intent().putExtra("photo_path", photoFile.absolutePath)
+                    )
+                    activity.finish()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            /*cameraView.captureImage { cameraKitImage ->
                 Log.e(TAG, "onImageCaptured: ")
                 try {
-                    val rawBitmap = cameraKitImage.bitmap
-                    // loadBitmap(rawBitmap)
+                    // performScan()
 
-                    val floatArray = classifier.getOutput(activity, rawBitmap)
-                    val drawnBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
-                    activity.runOnUiThread {
-                        view.ivBoundingBox.setImageBitmap(drawnBitmap)
-                    }
-
-                    /*val photoFile = BitmapHelper.bitmapToFile(
+                    *//*val photoFile = BitmapHelper.bitmapToFile(
                         rawBitmap,
                         AppFileManager.makeAppDir(context!!.getString(R.string.app_name))!!,
                         false
                     )
                     Log.e(TAG, "photoFile saved: ${photoFile.absolutePath}")
-                    photoPath = photoFile.absolutePath*/
+                    photoPath = photoFile.absolutePath*//*
 
-                    /*if (checkboxCompress.isChecked) {
+                    *//*if (checkboxCompress.isChecked) {
                         val options = BitmapFactory.Options().apply { inSampleSize = 1 }
                         val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath, options)
                         val compressedFile =
@@ -108,18 +125,18 @@ class CameraPreviewFragment : Fragment() {
                         // uploadFile(compressedFile.absolutePath)
                     } else {
                         // uploadFile(photoFile.absolutePath)
-                    }*/
-                    /*activity.setResult(
+                    }*//*
+                    *//*activity.setResult(
                         Activity.RESULT_OK,
                         Intent().apply { putExtra("photo_path", photoPath) })
-                    activity.finish()*/
+                    activity.finish()*//*
 
                     // val bitmap = BitmapFactory.decodeFile(photoPath)
                     // val byteBuffer = classifier.getOutput(activity, bitmap)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }
+            }*/
         }
 
         view.btnGallery.setOnClickListener {
@@ -157,6 +174,11 @@ class CameraPreviewFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        performScan(view)
+    }
+
     override fun onStart() {
         super.onStart()
         cameraView.start()
@@ -165,6 +187,25 @@ class CameraPreviewFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         cameraView.stop()
+    }
+
+    private fun performScan(view: View) {
+        view.cameraView.postDelayed({
+            if (view.cameraView.isStarted) {
+                view.cameraView.captureImage { cameraKitImage ->
+                    if (::rawBitmap.isInitialized) rawBitmap.recycle()
+                    rawBitmap = cameraKitImage.bitmap
+
+                    val floatArray = classifier.getOutput(activity, rawBitmap)
+                    if (::drawnLinesBitmap.isInitialized) drawnLinesBitmap.recycle()
+                    drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+                    activity.runOnUiThread {
+                        view.ivBoundingBox.setImageBitmap(drawnLinesBitmap)
+                        performScan(view)
+                    }
+                }
+            }
+        }, 1000)
     }
 
     /*private fun loadBitmap(rawBitmap: Bitmap) {
