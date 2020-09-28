@@ -1,0 +1,3 @@
+keystore password: aggdirect@bulldog
+alias: aggdirect_bulldog
+alias password: aggdirect@bulldog
