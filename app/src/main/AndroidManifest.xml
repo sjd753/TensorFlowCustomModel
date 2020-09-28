@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tensorflowcustommodel">
+    package="com.aggdirect.lens">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -26,7 +26,7 @@
         </provider>
 
         <activity
-            android:name=".SplashActivity"
+            android:name="com.aggdirect.lens.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -35,10 +35,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ImageActivity"
+            android:name="com.aggdirect.lens.ImageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CustomCameraActivity"
+            android:name="com.aggdirect.lens.CustomCameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- <intent-filter> -->

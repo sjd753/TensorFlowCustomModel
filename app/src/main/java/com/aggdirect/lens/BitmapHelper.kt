@@ -1,4 +1,4 @@
-package com.example.tensorflowcustommodel
+package com.aggdirect.lens
 
 // import androidx.exifinterface.media.ExifInterface
 import android.content.ContentResolver

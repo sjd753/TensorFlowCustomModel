@@ -1,4 +1,4 @@
-package com.example.tensorflowcustommodel
+package com.aggdirect.lens
 
 import android.annotation.SuppressLint
 import android.app.Activity

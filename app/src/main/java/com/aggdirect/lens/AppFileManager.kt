@@ -1,4 +1,4 @@
-package com.example.tensorflowcustommodel
+package com.aggdirect.lens
 
 import android.graphics.Bitmap
 import android.net.Uri
