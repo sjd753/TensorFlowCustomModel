@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                         .setMessage("Enable storage permission from settings app")
                         .setCancelable(false)
                         .setPositiveButton("Ok") { _, _ ->
-                            finish()
+                            App.startInstalledAppDetailsActivity(this@MainActivity)
                         }
                         .setNegativeButton("CANCEL") { _, _ -> finish() }.show()
                 }
