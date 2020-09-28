@@ -56,7 +56,8 @@ class MainActivity : AppCompatActivity() {
         permissionManager.with(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
         )
             // Optionally, specify a callback handler for all three callbacks
             .onCallback(object : OnPermissionCallback {
