@@ -23,12 +23,13 @@ class MainAct : AppCompatActivity() {
 
     companion object {
         private val TAG: String = MainAct::class.java.simpleName
+        private const val RC_CHOOSE_GALLERY = 1001
+        private const val RC_CHOOSE_CAMERA = 1002
     }
 
     private val permissionManager = PermissionManager.create(this)
-    private val CHOOSE_IMAGE = 1001
-    private val CHOOSE_CAMERA = 1002
-    private lateinit var photoImage: Bitmap
+
+    private lateinit var capturedBitmap: Bitmap
     private lateinit var classifier: ImageClassifier
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,7 @@ class MainAct : AppCompatActivity() {
         btnCamera.setOnClickListener {
             startActivityForResult(
                 Intent(this@MainAct, CameraAct::class.java),
-                CHOOSE_CAMERA
+                RC_CHOOSE_CAMERA
             )
         }
     }
@@ -100,7 +101,7 @@ class MainAct : AppCompatActivity() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        startActivityForResult(intent, CHOOSE_IMAGE)
+        startActivityForResult(intent, RC_CHOOSE_GALLERY)
     }
 
     override fun onRequestPermissionsResult(
@@ -114,42 +115,26 @@ class MainAct : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CHOOSE_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-
+        if (requestCode == RC_CHOOSE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
             try {
-                val stream = contentResolver!!.openInputStream(data.data!!)
-                if (::photoImage.isInitialized) photoImage.recycle()
-                photoImage = BitmapFactory.decodeStream(stream)
-//                photoImage =
-//                    Bitmap.createScaledBitmap(photoImage, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true)
-                // imageResult.setImageBitmap(photoImage)
-//                classifier.getOutput(this@ImageActivity,photoImage)
-//                val bitmap = classifier.getModelOutput(photoImage)
-                val floatArray = classifier.processTensor(this@MainAct, photoImage)
-                val drawnBitmap = BitmapHelper.drawBitmapByPoints(photoImage, floatArray)
-                val mergedBitmap = BitmapHelper.drawMergedBitmap(photoImage, drawnBitmap)
+                val stream = contentResolver.openInputStream(data.data!!)
+                // recycle bitmap
+                if (::capturedBitmap.isInitialized) capturedBitmap.recycle()
+                capturedBitmap = BitmapFactory.decodeStream(stream)
+
+                val floatArray = classifier.processTensor(this@MainAct, capturedBitmap)
+                val drawnBitmap = BitmapHelper.drawBitmapByPoints(capturedBitmap, floatArray)
+                val mergedBitmap = BitmapHelper.drawMergedBitmap(capturedBitmap, drawnBitmap)
                 imageResult.setImageBitmap(mergedBitmap)
-//                 val bitmap = classifier.getOutputImage(byteBuffer)
-//                val tensorImage = TensorImage.fromBitmap(bitmap)
-//                 imageResult.setImageBitmap(bitmap)
-//                classifier.recognizeImage(photoImage).subscribe(object : Consumer<List<Result>> {
-//                    override fun accept(t: List<Result>) {
-//                        txtResult.text = t.size.toString()
-//                    }
-//                })
+
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             }
-        } else if (requestCode == CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
+        } else if (requestCode == RC_CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
             val path = data.getStringExtra("photo_path")
             val bitmap = BitmapFactory.decodeFile(path)
             imageResult.setImageBitmap(bitmap)
             // val byteBuffer = classifier.getOutput(this@ImageActivity, bitmap)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        classifier.close()
     }
 }

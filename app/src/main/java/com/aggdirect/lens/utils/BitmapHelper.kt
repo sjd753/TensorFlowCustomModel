@@ -1,6 +1,5 @@
 package com.aggdirect.lens.utils
 
-// import androidx.exifinterface.media.ExifInterface
 import android.content.ContentResolver
 import android.content.Context
 import android.graphics.*

@@ -1,7 +1,5 @@
 package com.aggdirect.lens.tensorflow
 
-//import io.reactivex.Single
-
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
@@ -19,7 +17,6 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
-
 
 class ImageClassifier constructor(private val assetManager: AssetManager) {
 
@@ -91,23 +88,23 @@ class ImageClassifier constructor(private val assetManager: AssetManager) {
                 activity,
                 MODEL_PATH
             )
-            val tflite = Interpreter(tfliteModel)
+            val tfliteInterpreter = Interpreter(tfliteModel)
 
             val inputs = arrayOf(tImage.buffer, bitmap.height.toFloat(), bitmap.width.toFloat())
             val outputs = mutableMapOf<Int, ByteBuffer>()
             outputs[0] = outputBuffer.buffer
-            tflite.runForMultipleInputsOutputs(inputs, outputs as @NonNull Map<Int, Any>)
+            tfliteInterpreter.runForMultipleInputsOutputs(inputs, outputs as @NonNull Map<Int, Any>)
             val array = FloatArray(8)
             for ((index, i) in (0..28 step 4).withIndex()) {
                 val bufferResult = outputBuffer.buffer.getFloat(i)
                 array[index] = bufferResult
                 Log.e("buffer $index", bufferResult.toString())
             }
-
+            tfliteInterpreter.close()
             return array
         } catch (e: IOException) {
             e.printStackTrace()
-            Log.e("tfliteSupport", "Error reading model", e)
+            Log.e("processTensor", "Error reading model", e)
         }
 
         return FloatArray(0)
