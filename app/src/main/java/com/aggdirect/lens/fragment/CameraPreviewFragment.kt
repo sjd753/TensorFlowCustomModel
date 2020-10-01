@@ -200,7 +200,7 @@ class CameraPreviewFragment : Fragment() {
                     if (::rawBitmap.isInitialized) rawBitmap.recycle()
                     rawBitmap = cameraKitImage.bitmap
 
-                    val floatArray = classifier.getOutput(activity, rawBitmap)
+                    val floatArray = classifier.processTensor(activity, rawBitmap)
                     if (::drawnLinesBitmap.isInitialized) drawnLinesBitmap.recycle()
                     drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
                     activity.runOnUiThread {

@@ -125,7 +125,7 @@ class MainAct : AppCompatActivity() {
                 // imageResult.setImageBitmap(photoImage)
 //                classifier.getOutput(this@ImageActivity,photoImage)
 //                val bitmap = classifier.getModelOutput(photoImage)
-                val floatArray = classifier.getOutput(this@MainAct, photoImage)
+                val floatArray = classifier.processTensor(this@MainAct, photoImage)
                 val drawnBitmap = BitmapHelper.drawBitmapByPoints(photoImage, floatArray)
                 val mergedBitmap = BitmapHelper.drawMergedBitmap(photoImage, drawnBitmap)
                 imageResult.setImageBitmap(mergedBitmap)
