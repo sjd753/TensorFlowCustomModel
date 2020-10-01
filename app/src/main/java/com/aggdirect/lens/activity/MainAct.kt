@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
@@ -115,6 +116,7 @@ class MainAct : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) txtInfo.visibility = View.INVISIBLE
         if (requestCode == RC_CHOOSE_GALLERY && resultCode == Activity.RESULT_OK && data != null) {
             try {
                 val stream = contentResolver.openInputStream(data.data!!)
