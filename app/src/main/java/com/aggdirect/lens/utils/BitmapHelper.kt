@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.utils
 
 // import androidx.exifinterface.media.ExifInterface
 import android.content.ContentResolver
@@ -11,6 +11,8 @@ import android.os.Build.VERSION_CODES.N
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.FileProvider
+import com.aggdirect.lens.R
+import com.aggdirect.lens.application.AppFileManager
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*

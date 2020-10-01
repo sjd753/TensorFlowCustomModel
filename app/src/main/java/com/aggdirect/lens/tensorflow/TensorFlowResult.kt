@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.tensorflow
 
 import android.graphics.RectF
 

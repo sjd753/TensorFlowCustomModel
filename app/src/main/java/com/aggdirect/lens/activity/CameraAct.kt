@@ -1,12 +1,14 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.activity
 
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.aggdirect.lens.R
+import com.aggdirect.lens.fragment.CameraPreviewFragment
 
-class CustomCameraActivity : AppCompatActivity() {
+class CameraAct : AppCompatActivity() {
 
     companion object {
         internal const val RC_CAPTURE = 111

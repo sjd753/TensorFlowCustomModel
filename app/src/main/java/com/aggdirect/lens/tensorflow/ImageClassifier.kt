@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.tensorflow
 
 //import io.reactivex.Single
 
@@ -6,11 +6,11 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.aggdirect.lens.Keys.DIM_BATCH_SIZE
-import com.aggdirect.lens.Keys.DIM_IMG_SIZE_X
-import com.aggdirect.lens.Keys.DIM_IMG_SIZE_Y
-import com.aggdirect.lens.Keys.DIM_PIXEL_SIZE
-import com.aggdirect.lens.Keys.MODEL_PATH
+import com.aggdirect.lens.tensorflow.Keys.DIM_BATCH_SIZE
+import com.aggdirect.lens.tensorflow.Keys.DIM_IMG_SIZE_X
+import com.aggdirect.lens.tensorflow.Keys.DIM_IMG_SIZE_Y
+import com.aggdirect.lens.tensorflow.Keys.DIM_PIXEL_SIZE
+import com.aggdirect.lens.tensorflow.Keys.MODEL_PATH
 import org.checkerframework.checker.nullness.qual.NonNull
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter

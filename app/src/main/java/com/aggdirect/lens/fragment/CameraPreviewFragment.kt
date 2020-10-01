@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.fragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,6 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.aggdirect.lens.R
+import com.aggdirect.lens.application.AppFileManager
+import com.aggdirect.lens.tensorflow.ImageClassifier
+import com.aggdirect.lens.utils.BitmapHelper
 import com.wonderkiln.camerakit.CameraKit
 import kotlinx.android.synthetic.main.fragment_camera_preview.*
 import kotlinx.android.synthetic.main.fragment_camera_preview.view.*

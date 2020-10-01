@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.application
 
 import android.app.Activity
 import android.app.Application

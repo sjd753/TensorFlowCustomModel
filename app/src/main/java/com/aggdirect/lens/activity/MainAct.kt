@@ -1,4 +1,4 @@
-package com.aggdirect.lens
+package com.aggdirect.lens.activity
 
 import android.Manifest
 import android.app.Activity
@@ -9,16 +9,20 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.aggdirect.lens.R
+import com.aggdirect.lens.application.App
+import com.aggdirect.lens.tensorflow.ImageClassifier
+import com.aggdirect.lens.utils.BitmapHelper
 import com.github.buchandersenn.android_permission_manager.PermissionManager
 import com.github.buchandersenn.android_permission_manager.PermissionRequest
 import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
 import kotlinx.android.synthetic.main.activity_image.*
 import java.io.FileNotFoundException
 
-class MainActivity : AppCompatActivity() {
+class MainAct : AppCompatActivity() {
 
     companion object {
-        private val TAG: String = MainActivity::class.java.simpleName
+        private val TAG: String = MainAct::class.java.simpleName
     }
 
     private val permissionManager = PermissionManager.create(this)
@@ -37,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
         btnCamera.setOnClickListener {
             startActivityForResult(
-                Intent(this@MainActivity, CustomCameraActivity::class.java),
+                Intent(this@MainAct, CameraAct::class.java),
                 CHOOSE_CAMERA
             )
         }
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             .onCallback(object : OnPermissionCallback {
                 override fun onPermissionShowRationale(permissionRequest: PermissionRequest) {
                     Log.i(TAG, "storage permission show rationale")
-                    AlertDialog.Builder(this@MainActivity).apply {
+                    AlertDialog.Builder(this@MainAct).apply {
                         setMessage("Storage permission is required")
                         setCancelable(false)
                         setPositiveButton("OK") { dialog, which ->
@@ -78,11 +82,11 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onPermissionDenied() {
                     Log.i(TAG, "storage permission denied")
-                    AlertDialog.Builder(this@MainActivity).setTitle("Permission Denied")
+                    AlertDialog.Builder(this@MainAct).setTitle("Permission Denied")
                         .setMessage("Enable storage permission from settings app")
                         .setCancelable(false)
                         .setPositiveButton("Ok") { _, _ ->
-                            App.startInstalledAppDetailsActivity(this@MainActivity)
+                            App.startInstalledAppDetailsActivity(this@MainAct)
                         }
                         .setNegativeButton("CANCEL") { _, _ -> finish() }.show()
                 }
@@ -121,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                 // imageResult.setImageBitmap(photoImage)
 //                classifier.getOutput(this@ImageActivity,photoImage)
 //                val bitmap = classifier.getModelOutput(photoImage)
-                val floatArray = classifier.getOutput(this@MainActivity, photoImage)
+                val floatArray = classifier.getOutput(this@MainAct, photoImage)
                 val drawnBitmap = BitmapHelper.drawBitmapByPoints(photoImage, floatArray)
                 val mergedBitmap = BitmapHelper.drawMergedBitmap(photoImage, drawnBitmap)
                 imageResult.setImageBitmap(mergedBitmap)

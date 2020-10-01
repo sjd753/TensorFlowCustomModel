@@ -30,7 +30,7 @@
         </provider>
 
         <activity
-            android:name="com.aggdirect.lens.SplashActivity"
+            android:name="com.aggdirect.lens.activity.SplashAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -39,10 +39,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aggdirect.lens.MainActivity"
+            android:name="com.aggdirect.lens.activity.MainAct"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.aggdirect.lens.CustomCameraActivity"
+            android:name="com.aggdirect.lens.activity.CameraAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- <intent-filter> -->
