@@ -42,10 +42,20 @@ class MainAct : AppCompatActivity() {
             choosePicture()
         }
         btnCamera.setOnClickListener {
-            startActivityForResult(
-                Intent(this@MainAct, CameraAct::class.java),
-                RC_CHOOSE_CAMERA
-            )
+            AlertDialog.Builder(this@MainAct)
+                .setTitle("Note")
+                .setMessage("Focus camera on document and avoid movement. Please place the document on a dark background for better results")
+                .setPositiveButton(
+                    "Proceed"
+                ) { _, _ ->
+                    startActivityForResult(
+                        Intent(this@MainAct, CameraAct::class.java),
+                        RC_CHOOSE_CAMERA
+                    )
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+                .show()
+
         }
     }
 

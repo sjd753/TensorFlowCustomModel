@@ -16,18 +16,20 @@
             android:keepScreenOn="true"
             camerakit:ckCropOutput="true">
 
-            <!--        <com.camerakit.CameraKitView-->
-            <!--            android:id="@+id/cameraKitView"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="match_parent"-->
-            <!--            android:adjustViewBounds="true"-->
-            <!--            android:keepScreenOn="true"-->
-            <!--            app:camera_facing="back"-->
-            <!--            app:camera_flash="off"-->
-            <!--            app:camera_focus="continuous"-->
-            <!--            app:camera_permissions="camera">-->
 
         </com.wonderkiln.camerakit.CameraView>
+
+
+        <!--        <com.camerakit.CameraKitView-->
+        <!--            android:id="@+id/cameraKitView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:adjustViewBounds="true"-->
+        <!--            android:keepScreenOn="true"-->
+        <!--            app:camera_facing="back"-->
+        <!--            app:camera_flash="off"-->
+        <!--            app:camera_focus="continuous"-->
+        <!--            app:camera_permissions="camera">-->
 
         <!--        <com.isseiaoki.simplecropview.CropImageView xmlns:custom="http://schemas.android.com/apk/res-auto"-->
         <!--            android:id="@+id/cropImageView"-->
@@ -73,12 +75,12 @@
                 android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="@dimen/margin_16">
+                android:padding="@dimen/margin_16"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_16"
                     android:gravity="center"
                     android:maxWidth="400dp"
                     android:text="Focus camera on document and avoid movement. Please place the document on a dark background for better results"
@@ -94,24 +96,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="invisible">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivGuidelineDynamic"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_48"
-                    android:src="@drawable/shape_rect_border" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivGuidelineStatic"
-                    android:layout_width="360dp"
-                    android:layout_height="360dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/margin_48"
-                    android:src="@drawable/shape_rect_border"
-                    android:visibility="gone" />
+                android:visibility="visible">
 
             </FrameLayout>
 
@@ -123,7 +108,7 @@
                 android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="@dimen/margin_24">
+                android:padding="@dimen/margin_16">
 
                 <LinearLayout
                     android:layout_width="0dp"
