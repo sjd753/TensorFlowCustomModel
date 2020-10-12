@@ -4,10 +4,10 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import org.checkerframework.checker.nullness.qual.NonNull
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
@@ -21,14 +21,14 @@ import java.nio.channels.FileChannel
 class ImageClassifier constructor(private val assetManager: AssetManager) {
 
     companion object {
-        const val MODEL_PATH = "ticket_scan_mvp_2.tflite"
+        const val MODEL_PATH = "ticket_scan_dl_v4.tflite"
 
         const val INPUT_SIZE = 224
         const val MAX_RESULTS = 3
         const val DIM_BATCH_SIZE = 4
         const val DIM_PIXEL_SIZE = 3
-        const val DIM_IMG_SIZE_X = 360
-        const val DIM_IMG_SIZE_Y = 640
+        const val DIM_IMG_SIZE_X = 126
+        const val DIM_IMG_SIZE_Y = 224
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap) {
@@ -63,6 +63,7 @@ class ImageClassifier constructor(private val assetManager: AssetManager) {
         // refer to the ImageProcessor Architecture section in this README.
         val imageProcessor: ImageProcessor = ImageProcessor.Builder()
             .add(ResizeOp(DIM_IMG_SIZE_Y, DIM_IMG_SIZE_X, ResizeOp.ResizeMethod.BILINEAR))
+            .add(NormalizeOp(0.0f, 255.0f))
             .build()
 
         // Create a TensorImage object. This creates the tensor of the corresponding
@@ -71,7 +72,10 @@ class ImageClassifier constructor(private val assetManager: AssetManager) {
 
         // Analysis code for every frame
         // Pre-process the image
-        tImage.load(bitmap)
+        val inputBitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true)
+        tImage.load(inputBitmap)
+        Log.e("processTensor", tImage.height.toString())
+        Log.e("processTensor", tImage.width.toString())
         tImage = imageProcessor.process(tImage)
 
         // Create a container for the result and specify that this is a quantized model.
@@ -90,10 +94,11 @@ class ImageClassifier constructor(private val assetManager: AssetManager) {
             )
             val tfliteInterpreter = Interpreter(tfliteModel)
 
-            val inputs = arrayOf(tImage.buffer, bitmap.height.toFloat(), bitmap.width.toFloat())
-            val outputs = mutableMapOf<Int, ByteBuffer>()
-            outputs[0] = outputBuffer.buffer
-            tfliteInterpreter.runForMultipleInputsOutputs(inputs, outputs as @NonNull Map<Int, Any>)
+            // val inputs = arrayOf(tImage.buffer, bitmap.height.toFloat(), bitmap.width.toFloat())
+            // val outputs = mutableMapOf<Int, ByteBuffer>()
+            // outputs[0] = outputBuffer.buffer
+            tfliteInterpreter.run(tImage.buffer, outputBuffer.buffer)
+            // tfliteInterpreter.runForMultipleInputsOutputs(inputs, outputs as @NonNull Map<Int, Any>)
             val array = FloatArray(8)
             for ((index, i) in (0..28 step 4).withIndex()) {
                 val bufferResult = outputBuffer.buffer.getFloat(i)
