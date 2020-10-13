@@ -102,8 +102,12 @@ class ImageClassifier constructor(private val assetManager: AssetManager) {
             val array = FloatArray(8)
             for ((index, i) in (0..28 step 4).withIndex()) {
                 val bufferResult = outputBuffer.buffer.getFloat(i)
-                array[index] = bufferResult
+                if (index % 2 == 0)
+                    array[index] = bufferResult * bitmap.width / DIM_IMG_SIZE_X
+                else
+                    array[index] = bufferResult * bitmap.height / DIM_IMG_SIZE_Y
                 Log.e("buffer $index", bufferResult.toString())
+                Log.e("computed buffer $index", array[index].toString())
             }
             tfliteInterpreter.close()
             return array

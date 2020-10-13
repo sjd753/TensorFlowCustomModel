@@ -153,23 +153,24 @@ object BitmapHelper {
 
         // canvas.drawPath(path, paint)
         val arrayToDraw = FloatArray(16)
+        // top left to top right
         arrayToDraw[0] = array[0]
         arrayToDraw[1] = array[1]
         arrayToDraw[2] = array[2]
         arrayToDraw[3] = array[3]
-
+        // top right to bottom right
         arrayToDraw[4] = array[2]
         arrayToDraw[5] = array[3]
-        arrayToDraw[6] = array[4]
-        arrayToDraw[7] = array[5]
-
-        arrayToDraw[8] = array[4]
-        arrayToDraw[9] = array[5]
-        arrayToDraw[10] = array[6]
-        arrayToDraw[11] = array[7]
-
-        arrayToDraw[12] = array[6]
-        arrayToDraw[13] = array[7]
+        arrayToDraw[6] = array[6]
+        arrayToDraw[7] = array[7]
+        // bottom right to bottom left
+        arrayToDraw[8] = array[6]
+        arrayToDraw[9] = array[7]
+        arrayToDraw[10] = array[4]
+        arrayToDraw[11] = array[5]
+        // bottom left to top right
+        arrayToDraw[12] = array[4]
+        arrayToDraw[13] = array[5]
         arrayToDraw[14] = array[0]
         arrayToDraw[15] = array[1]
 
