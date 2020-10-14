@@ -29,7 +29,7 @@ class CameraPreviewFragment : Fragment() {
 
     companion object {
         private val TAG = CameraPreviewFragment::class.java.simpleName
-        private const val PROCESS_DELAY = 800L
+        private const val PROCESS_DELAY = 600L
     }
 
     // private lateinit var app: App
