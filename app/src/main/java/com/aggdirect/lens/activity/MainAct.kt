@@ -17,7 +17,7 @@ import com.aggdirect.lens.utils.BitmapHelper
 import com.github.buchandersenn.android_permission_manager.PermissionManager
 import com.github.buchandersenn.android_permission_manager.PermissionRequest
 import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
-import kotlinx.android.synthetic.main.activity_image.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.FileNotFoundException
 
 class MainAct : AppCompatActivity() {
@@ -35,7 +35,7 @@ class MainAct : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image)
+        setContentView(R.layout.activity_main)
 
         classifier = ImageClassifier(assets)
         btnGallery.setOnClickListener {
