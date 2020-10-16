@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.App
+import com.aggdirect.lens.fragment.ResultInfoDialogFragment
 import com.aggdirect.lens.tensorflow.ImageClassifier
 import com.aggdirect.lens.utils.BitmapHelper
 import com.github.buchandersenn.android_permission_manager.PermissionManager
@@ -138,6 +139,14 @@ class MainAct : AppCompatActivity() {
                 val drawnBitmap = BitmapHelper.drawBitmapByPoints(capturedBitmap, floatArray)
                 val mergedBitmap = BitmapHelper.drawMergedBitmap(capturedBitmap, drawnBitmap)
                 imageResult.setImageBitmap(mergedBitmap)
+
+                btnInfo.visibility = View.VISIBLE
+                btnInfo.setOnClickListener {
+                    ResultInfoDialogFragment.newInstance(floatArray).show(
+                        supportFragmentManager,
+                        ResultInfoDialogFragment::class.java.simpleName
+                    )
+                }
 
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
