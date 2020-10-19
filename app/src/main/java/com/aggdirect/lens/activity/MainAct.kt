@@ -153,9 +153,19 @@ class MainAct : AppCompatActivity() {
             }
         } else if (requestCode == RC_CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
             val path = data.getStringExtra("photo_path")
+            val floatArray = data.getFloatArrayExtra("float_array")
             val bitmap = BitmapFactory.decodeFile(path)
             imageResult.setImageBitmap(bitmap)
             // val byteBuffer = classifier.getOutput(this@ImageActivity, bitmap)
+            floatArray?.let {
+                btnInfo.visibility = View.VISIBLE
+                btnInfo.setOnClickListener {
+                    ResultInfoDialogFragment.newInstance(floatArray).show(
+                        supportFragmentManager,
+                        ResultInfoDialogFragment::class.java.simpleName
+                    )
+                }
+            }
         }
     }
 }

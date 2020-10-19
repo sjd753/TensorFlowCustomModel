@@ -39,6 +39,7 @@ class CameraPreviewFragment : Fragment() {
 
     private var photoPath: String = ""
 
+    private lateinit var floatArray: FloatArray
     private lateinit var rawBitmap: Bitmap
     private lateinit var drawnLinesBitmap: Bitmap
 
@@ -64,6 +65,7 @@ class CameraPreviewFragment : Fragment() {
 
         view.btn_capture.setOnClickListener {
             if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::drawnLinesBitmap.isInitialized && !drawnLinesBitmap.isRecycled) {
+                val floatArray = this.floatArray
                 // remove callbacks to get rid of pending preview and result difference
                 view.cameraView.removeCallbacks(runnable)
                 val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
@@ -82,7 +84,9 @@ class CameraPreviewFragment : Fragment() {
 
                     activity.setResult(
                         Activity.RESULT_OK,
-                        Intent().putExtra("photo_path", photoFile.absolutePath)
+                        Intent()
+                            .putExtra("photo_path", photoFile.absolutePath)
+                            .putExtra("float_array", floatArray)
                     )
                     activity.finish()
                 } catch (e: Exception) {
@@ -130,7 +134,7 @@ class CameraPreviewFragment : Fragment() {
                 if (::rawBitmap.isInitialized) rawBitmap.recycle()
                 rawBitmap = cameraKitImage.bitmap
 
-                val floatArray = classifier.processTensor(activity, rawBitmap)
+                floatArray = classifier.processTensor(activity, rawBitmap)
                 if (::drawnLinesBitmap.isInitialized) drawnLinesBitmap.recycle()
                 drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
                 activity.runOnUiThread {

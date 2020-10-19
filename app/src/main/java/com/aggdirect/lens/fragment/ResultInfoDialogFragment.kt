@@ -56,18 +56,28 @@ class ResultInfoDialogFragment : BottomSheetDialogFragment() {
     private inner class ItemAdapter(private val mFloatArray: FloatArray) :
         RecyclerView.Adapter<ViewHolder>() {
 
-        val titles = arrayOf("")
+        val titles = arrayOf(
+            "top_left_x: ",
+            "top_left_y: ",
+            "top_right_x: ",
+            "top_right_y: ",
+            "bottom_left_x: ",
+            "bottom_left_y: ",
+            "bottom_right_x: ",
+            "bottom_right_y: "
+        )
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             return ViewHolder(LayoutInflater.from(parent.context), parent)
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.text.text = position.toString()
+            val text = titles[position] + mFloatArray[position].toString()
+            holder.text.text = text
         }
 
         override fun getItemCount(): Int {
-            return mFloatArray.size
+            return if (mFloatArray.size == 8) mFloatArray.size else 0
         }
     }
 
