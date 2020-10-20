@@ -6,14 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.aggdirect.lens.R
-import com.aggdirect.lens.application.AppFileManager
 import com.aggdirect.lens.tensorflow.ImageClassifier
 import com.aggdirect.lens.utils.BitmapHelper
 import com.wonderkiln.camerakit.CameraKit
@@ -42,6 +40,7 @@ class CameraPreviewFragment : Fragment() {
     private lateinit var floatArray: FloatArray
     private lateinit var rawBitmap: Bitmap
     private lateinit var drawnLinesBitmap: Bitmap
+    private lateinit var mergedBitmap: Bitmap
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,25 +67,27 @@ class CameraPreviewFragment : Fragment() {
                 val floatArray = this.floatArray
                 // remove callbacks to get rid of pending preview and result difference
                 view.cameraView.removeCallbacks(runnable)
-                val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+
                 try {
-                    val photoFile = BitmapHelper.bitmapToFile(
-                        mergedBitmap,
-                        AppFileManager.makeAppDir(context!!.getString(R.string.app_name))!!,
-                        false
-                    )
-                    Log.e(TAG, "photoFile saved: ${photoFile.absolutePath}")
-                    photoPath = photoFile.absolutePath
+                    // val photoFile = BitmapHelper.bitmapToFile(
+                    //     mergedBitmap,
+                    //     AppFileManager.makeAppDir(context!!.getString(R.string.app_name))!!,
+                    //     false
+                    // )
+                    // Log.e(TAG, "photoFile saved: ${photoFile.absolutePath}")
+                    // photoPath = photoFile.absolutePath
 
                     // val options = BitmapFactory.Options().apply { inSampleSize = 1 }
                     // val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath, options)
                     // val compressedFile = BitmapHelper.saveCompressedBitmap(bitmap, 90, photoFile.absolutePath)
 
+                    val byteArray = BitmapHelper.compressedBitmapToByteArray(mergedBitmap, 70)
+
                     activity.setResult(
                         Activity.RESULT_OK,
                         Intent()
-                            .putExtra("photo_path", photoFile.absolutePath)
                             .putExtra("float_array", floatArray)
+                            .putExtra("byte_array", byteArray)
                     )
                     activity.finish()
                 } catch (e: Exception) {
@@ -133,10 +134,16 @@ class CameraPreviewFragment : Fragment() {
             view.cameraView.captureImage { cameraKitImage ->
                 if (::rawBitmap.isInitialized) rawBitmap.recycle()
                 rawBitmap = cameraKitImage.bitmap
-
+                // tensor processing on raw bitmap
                 floatArray = classifier.processTensor(activity, rawBitmap)
+                // todo: get the non computed float array
+                // drawn line bitmap transparent background
                 if (::drawnLinesBitmap.isInitialized) drawnLinesBitmap.recycle()
                 drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+                // merged bitmap
+                if (::mergedBitmap.isInitialized) mergedBitmap.recycle()
+                mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+                // update ui
                 activity.runOnUiThread {
                     view.ivBoundingBox.setImageBitmap(drawnLinesBitmap)
                     performScan(view)

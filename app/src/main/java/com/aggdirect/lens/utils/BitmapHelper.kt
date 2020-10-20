@@ -221,6 +221,22 @@ object BitmapHelper {
         return imageFile
     }
 
+    fun compressedBitmapToByteArray(bitmap: Bitmap, quality: Int): ByteArray {
+        try {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream)
+            val array = byteArrayOutputStream.toByteArray()
+            byteArrayOutputStream.flush()
+            byteArrayOutputStream.close()
+            return array
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(BitmapHelper::class.java.simpleName, "Error compressing bitmap", e)
+        }
+
+        return ByteArray(0)
+    }
+
 //    fun findOrientation(file: File): Int {
 //        var orientation = 0
 //        val ei: ExifInterface?
