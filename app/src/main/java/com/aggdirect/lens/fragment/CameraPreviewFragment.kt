@@ -38,16 +38,12 @@ class CameraPreviewFragment : Fragment() {
     private var photoPath: String = ""
 
     private lateinit var floatArray: FloatArray
-    private lateinit var rawBitmap: Bitmap
-    private lateinit var drawnLinesBitmap: Bitmap
     private lateinit var mergedBitmap: Bitmap
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AppCompatActivity) {
             activity = context
-//            app = context.application as App
-//            app.appSettings = AppSettings(context)
             classifier = ImageClassifier(activity.assets)
         }
     }
@@ -63,8 +59,7 @@ class CameraPreviewFragment : Fragment() {
         view.cameraView.setMethod(CameraKit.Constants.METHOD_STILL)
 
         view.btn_capture.setOnClickListener {
-            if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::drawnLinesBitmap.isInitialized && !drawnLinesBitmap.isRecycled) {
-                val floatArray = this.floatArray
+            if (::mergedBitmap.isInitialized && !mergedBitmap.isRecycled && ::floatArray.isInitialized) {
                 // remove callbacks to get rid of pending preview and result difference
                 view.cameraView.removeCallbacks(runnable)
 
@@ -132,17 +127,18 @@ class CameraPreviewFragment : Fragment() {
         if (rootView.cameraView.isStarted) {
             val view = rootView
             view.cameraView.captureImage { cameraKitImage ->
-                if (::rawBitmap.isInitialized) rawBitmap.recycle()
-                rawBitmap = cameraKitImage.bitmap
+                val rawBitmap = cameraKitImage.bitmap
                 // tensor processing on raw bitmap
                 floatArray = classifier.processTensor(activity, rawBitmap)
                 // todo: get the non computed float array
                 // drawn line bitmap transparent background
-                if (::drawnLinesBitmap.isInitialized) drawnLinesBitmap.recycle()
-                drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+                val drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
                 // merged bitmap
                 if (::mergedBitmap.isInitialized) mergedBitmap.recycle()
                 mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+
+                // rawBitmap.recycle()
+                // drawnLinesBitmap.recycle()
                 // update ui
                 activity.runOnUiThread {
                     view.ivBoundingBox.setImageBitmap(drawnLinesBitmap)
