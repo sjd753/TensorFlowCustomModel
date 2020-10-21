@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.aggdirect.lens.R
 import com.aggdirect.lens.tensorflow.ImageClassifier
 import com.camerakit.CameraKit
+import com.camerakit.CameraKitView
 import kotlinx.android.synthetic.main.fragment_camera_preview.*
 import kotlinx.android.synthetic.main.fragment_camera_preview.view.*
 
@@ -56,6 +57,11 @@ class CameraPreviewFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_camera_preview, container, false)
 
         view.cameraKitView.focus = CameraKit.FOCUS_CONTINUOUS
+        view.cameraKitView.errorListener =
+            CameraKitView.ErrorListener { cameraKitView, cameraException ->
+                cameraException?.printStackTrace()
+                Log.e("onError", "an error occurred")
+            }
 
         view.btn_capture.setOnClickListener {
             cameraKitView.captureFrame { cameraKitView, bytes ->
