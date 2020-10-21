@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.aggdirect.lens.R
 import com.aggdirect.lens.tensorflow.ImageClassifier
-import com.aggdirect.lens.utils.BitmapHelper
-import com.wonderkiln.camerakit.CameraKit
+import com.camerakit.CameraKit
 import kotlinx.android.synthetic.main.fragment_camera_preview.*
 import kotlinx.android.synthetic.main.fragment_camera_preview.view.*
 
@@ -55,13 +55,26 @@ class CameraPreviewFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_camera_preview, container, false)
 
-        view.cameraView.setFocus(CameraKit.Constants.FOCUS_CONTINUOUS)
-        view.cameraView.setMethod(CameraKit.Constants.METHOD_STILL)
+        view.cameraKitView.focus = CameraKit.FOCUS_CONTINUOUS
 
         view.btn_capture.setOnClickListener {
-            if (::mergedBitmap.isInitialized && !mergedBitmap.isRecycled && ::floatArray.isInitialized) {
+            cameraKitView.captureFrame { cameraKitView, bytes ->
+                Log.e("TAG Frame", bytes.toString())
+            }
+            cameraKitView.captureImage { cameraKitView, bytes ->
+                Log.e("TAG Image", bytes.toString())
+                activity.setResult(
+                    Activity.RESULT_OK,
+                    Intent()
+                        .putExtra("float_array", FloatArray(0))
+                        .putExtra("byte_array", bytes)
+                )
+                activity.finish()
+
+            }
+            /*if (::mergedBitmap.isInitialized && !mergedBitmap.isRecycled && ::floatArray.isInitialized) {
                 // remove callbacks to get rid of pending preview and result difference
-                view.cameraView.removeCallbacks(runnable)
+                view.cameraKitView.removeCallbacks(runnable)
 
                 try {
                     // val photoFile = BitmapHelper.bitmapToFile(
@@ -88,7 +101,7 @@ class CameraPreviewFragment : Fragment() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }
+            }*/
         }
 
         view.btnGallery.setOnClickListener {
@@ -106,27 +119,49 @@ class CameraPreviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rootView = view
-        performScan(view)
+        // performScan(view)
     }
 
     override fun onStart() {
         super.onStart()
-        cameraView.start()
+        cameraKitView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cameraKitView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        cameraKitView.onPause()
     }
 
     override fun onStop() {
         super.onStop()
-        cameraView.stop()
+        cameraKitView.onStop()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        cameraKitView.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun performScan(view: View) {
-        view.cameraView.postDelayed(runnable, PROCESS_DELAY)
+        view.cameraKitView.postDelayed(runnable, PROCESS_DELAY)
     }
 
     private val runnable = Runnable {
-        if (rootView.cameraView.isStarted) {
+        cameraKitView.captureFrame { cameraKitView, byteArray ->
+
+        }
+        /*if (rootView.cameraKitView.isStarted) {
             val view = rootView
-            view.cameraView.captureImage { cameraKitImage ->
+            view.cameraKitView.captureImage { cameraKitImage ->
                 val rawBitmap = cameraKitImage.bitmap
                 // tensor processing on raw bitmap
                 floatArray = classifier.processTensor(activity, rawBitmap)
@@ -145,6 +180,6 @@ class CameraPreviewFragment : Fragment() {
                     performScan(view)
                 }
             }
-        }
+        }*/
     }
 }
