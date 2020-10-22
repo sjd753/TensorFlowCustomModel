@@ -14,48 +14,15 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <com.wonderkiln.camerakit.CameraView xmlns:camerakit="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/cameraView"
+            <androidx.camera.view.PreviewView
+                android:id="@+id/viewFinder"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:keepScreenOn="true"
-                camerakit:ckCropOutput="true">
-
-
-            </com.wonderkiln.camerakit.CameraView>
+                android:layout_height="match_parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivBoundingBox"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
-            <!--        <com.camerakit.CameraKitView-->
-            <!--            android:id="@+id/cameraKitView"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="match_parent"-->
-            <!--            android:adjustViewBounds="true"-->
-            <!--            android:keepScreenOn="true"-->
-            <!--            app:camera_facing="back"-->
-            <!--            app:camera_flash="off"-->
-            <!--            app:camera_focus="continuous"-->
-            <!--            app:camera_permissions="camera">-->
-
-            <!--        <com.isseiaoki.simplecropview.CropImageView xmlns:custom="http://schemas.android.com/apk/res-auto"-->
-            <!--            android:id="@+id/cropImageView"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="match_parent"-->
-            <!--            android:adjustViewBounds="true"-->
-            <!--            android:scaleType="centerCrop"-->
-            <!--            android:visibility="gone"-->
-            <!--            custom:scv_crop_enabled="true"-->
-            <!--            custom:scv_crop_mode="free"-->
-            <!--            custom:scv_guide_show_mode="show_always"-->
-            <!--            custom:scv_handle_shadow_enabled="true"-->
-            <!--            custom:scv_handle_show_mode="show_always"-->
-            <!--            custom:scv_initial_frame_scale="0.5"-->
-            <!--            custom:scv_min_frame_size="50dp" />-->
-
 
         </FrameLayout>
 

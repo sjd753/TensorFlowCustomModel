@@ -152,22 +152,28 @@ class MainAct : AppCompatActivity() {
                 e.printStackTrace()
             }
         } else if (requestCode == RC_CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
-            val floatArray = data.getFloatArrayExtra("float_array")
-            val byteArray = data.getByteArrayExtra("byte_array")
-            byteArray?.let {
-                val bitmap = BitmapHelper.bytesToBitmap(it)
-                imageResult.setImageBitmap(bitmap)
-            }
-            // val byteBuffer = classifier.getOutput(this@ImageActivity, bitmap)
-            floatArray?.let {
-                btnInfo.visibility = View.VISIBLE
-                btnInfo.setOnClickListener {
-                    ResultInfoDialogFragment.newInstance(floatArray).show(
-                        supportFragmentManager,
-                        ResultInfoDialogFragment::class.java.simpleName
-                    )
+            try {
+                val floatArray = data.getFloatArrayExtra("float_array")
+                val photoPath = data.getStringExtra("photo_path")
+                //val byteArray = data.getByteArrayExtra("byte_array")
+                photoPath?.let {
+                    val bitmap = BitmapFactory.decodeFile(it)
+                    imageResult.setImageBitmap(bitmap)
                 }
+                // val byteBuffer = classifier.getOutput(this@ImageActivity, bitmap)
+                floatArray?.let {
+                    btnInfo.visibility = View.VISIBLE
+                    btnInfo.setOnClickListener {
+                        ResultInfoDialogFragment.newInstance(floatArray).show(
+                            supportFragmentManager,
+                            ResultInfoDialogFragment::class.java.simpleName
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
         }
     }
 }
