@@ -10,6 +10,7 @@ import android.os.Build.VERSION_CODES.N
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.AppFileManager
 import java.io.*
@@ -237,41 +238,37 @@ object BitmapHelper {
         return ByteArray(0)
     }
 
-//    fun findOrientation(file: File): Int {
-//        var orientation = 0
-//        val ei: ExifInterface?
-//        try {
-//            ei = ExifInterface(file.absolutePath)
-//            orientation =
-//                ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-//            Log.e("Orientation", orientation.toString() + "")
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//            orientation = -1
-//            Log.e(BitmapHelper::class.java.simpleName, "Photo does not exists", e)
-//        }
-//
-//        return orientation
-//    }
-//
-//    fun rotateBitmap(source: Bitmap?, orientation: Int): Bitmap? {
-//        when (orientation) {
-//            ExifInterface.ORIENTATION_ROTATE_90 -> {
-//                if (source != null)
-//                    return rotateBitmap(source, 90f)
-//                return source
-//            }
-//            ExifInterface.ORIENTATION_ROTATE_180 -> {
-//                if (source != null)
-//                    return rotateBitmap(source, 180f)
-//                return source
-//            }
-//            ExifInterface.ORIENTATION_ROTATE_270 -> {
-//                return if (source != null) rotateBitmap(source, 270f) else source
-//            }
-//            else -> return source
-//        }
-//    }
+    fun findOrientation(file: File): Int {
+        var orientation = 0
+        val ei: ExifInterface?
+        try {
+            ei = ExifInterface(file.absolutePath)
+            orientation =
+                ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            Log.e("Orientation", orientation.toString() + "")
+        } catch (e: IOException) {
+            e.printStackTrace()
+            orientation = -1
+            Log.e(BitmapHelper::class.java.simpleName, "Photo does not exists", e)
+        }
+
+        return orientation
+    }
+
+    fun rotateBitmap(source: Bitmap, orientation: Int): Bitmap {
+        return when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> {
+                rotateBitmap(source, 90f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_180 -> {
+                rotateBitmap(source, 180f)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> {
+                rotateBitmap(source, 270f)
+            }
+            else -> source
+        }
+    }
 
     private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
         try {

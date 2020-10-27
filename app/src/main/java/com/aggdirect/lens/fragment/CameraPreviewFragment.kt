@@ -229,8 +229,13 @@ class CameraPreviewFragment : Fragment() {
                     val msg = "Photo capture succeeded: $savedUri"
                     // Toast.makeText(activity.applicationContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
+                    // decode file to bitmap
                     val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                    processBitmap(bitmap)
+                    // find orientation and rotate if required
+                    val orientation = BitmapHelper.findOrientation(photoFile)
+                    val rotatedBitmap = BitmapHelper.rotateBitmap(bitmap, orientation)
+                    // process bitmap with correct orientation
+                    processBitmap(rotatedBitmap)
                 }
             })
     }
