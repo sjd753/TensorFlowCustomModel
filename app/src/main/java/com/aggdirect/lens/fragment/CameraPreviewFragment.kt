@@ -147,12 +147,14 @@ class CameraPreviewFragment : Fragment() {
 
             // Preview
             val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .build()
                 .also {
                     it.setSurfaceProvider(rootView.viewFinder.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .build()
 
             // Select back camera as a default
