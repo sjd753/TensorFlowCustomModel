@@ -39,7 +39,8 @@ class CameraPreviewFragment : Fragment() {
 
     companion object {
         private val TAG = CameraPreviewFragment::class.java.simpleName
-        private const val PROCESS_DELAY = 800L
+        private const val PROCESS_DELAY = 600L
+        private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     }
 
     // private lateinit var app: App
@@ -53,9 +54,6 @@ class CameraPreviewFragment : Fragment() {
     private lateinit var imageCapture: ImageCapture
     private lateinit var floatArray: FloatArray
     private lateinit var mergedBitmap: Bitmap
-
-
-    private val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
     private lateinit var outputDirectory: File
 
     override fun onAttach(context: Context) {
@@ -155,6 +153,7 @@ class CameraPreviewFragment : Fragment() {
 
             imageCapture = ImageCapture.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
 
             // Select back camera as a default
@@ -232,10 +231,17 @@ class CameraPreviewFragment : Fragment() {
                     // Toast.makeText(activity.applicationContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                     // decode file to bitmap
-                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                    // val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+
+                    val options = BitmapFactory.Options().apply { inSampleSize = 1 }
+                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath, options)
+                    val compressedFile =
+                        BitmapHelper.saveCompressedBitmap(bitmap, 90, photoFile.absolutePath)
+                    val compressedBitmap = BitmapFactory.decodeFile(compressedFile.absolutePath)
+
                     // find orientation and rotate if required
-                    val orientation = BitmapHelper.findOrientation(photoFile)
-                    val rotatedBitmap = BitmapHelper.rotateBitmap(bitmap, orientation)
+                    val orientation = BitmapHelper.findOrientation(compressedFile)
+                    val rotatedBitmap = BitmapHelper.rotateBitmap(compressedBitmap, orientation)
                     // process bitmap with correct orientation
                     processBitmap(rotatedBitmap)
                 }
