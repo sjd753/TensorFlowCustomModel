@@ -5,15 +5,16 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
+import android.hardware.display.DisplayManager
+import android.media.ExifInterface
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.impl.utils.Exif
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -126,6 +127,20 @@ class CameraPreviewFragment : Fragment() {
         performScan(view)
     }
 
+    override fun onStart() {
+        super.onStart()
+        orientationEventListener.enable()
+        val displayManager = activity.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        displayManager.registerDisplayListener(displayListener, null)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        orientationEventListener.disable()
+        val displayManager = activity.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        displayManager.unregisterDisplayListener(displayListener)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         rootView.viewFinder.removeCallbacks(runnable)
@@ -134,6 +149,43 @@ class CameraPreviewFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+    }
+
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayChanged(displayId: Int) {
+            if (rootView.display.displayId == displayId) {
+                val rotation = rootView.display.rotation
+                // imageAnalysis.targetRotation = rotation
+                imageCapture.targetRotation = rotation
+                Log.e(TAG, "display rotation: $rotation")
+            }
+        }
+
+        override fun onDisplayAdded(displayId: Int) {
+        }
+
+        override fun onDisplayRemoved(displayId: Int) {
+        }
+    }
+
+    private val orientationEventListener by lazy {
+        object : OrientationEventListener(activity) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ExifInterface.ORIENTATION_UNDEFINED) {
+                    return
+                }
+
+                val rotation = when (orientation) {
+                    in 45 until 135 -> Surface.ROTATION_270
+                    in 135 until 225 -> Surface.ROTATION_180
+                    in 225 until 315 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+                Log.e(TAG, "orientation: $orientation rotation: $rotation")
+                // imageAnalysis.targetRotation = rotation
+                imageCapture.targetRotation = rotation
+            }
+        }
     }
 
     private fun startCamera() {
@@ -154,6 +206,7 @@ class CameraPreviewFragment : Fragment() {
             imageCapture = ImageCapture.Builder()
                 .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setTargetRotation(Surface.ROTATION_90)
                 .build()
 
             // Select back camera as a default
@@ -225,7 +278,8 @@ class CameraPreviewFragment : Fragment() {
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+
                     val savedUri = Uri.fromFile(photoFile)
                     val msg = "Photo capture succeeded: $savedUri"
                     // Toast.makeText(activity.applicationContext, msg, Toast.LENGTH_SHORT).show()
@@ -233,15 +287,22 @@ class CameraPreviewFragment : Fragment() {
                     // decode file to bitmap
                     // val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
 
+                    val exif = Exif.createFromFile(photoFile)
+                    val rotation = exif.rotation
+                    Log.e(TAG, "exif rotation: $rotation")
+
+
                     val options = BitmapFactory.Options().apply { inSampleSize = 1 }
                     val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath, options)
                     val compressedFile =
                         BitmapHelper.saveCompressedBitmap(bitmap, 90, photoFile.absolutePath)
                     val compressedBitmap = BitmapFactory.decodeFile(compressedFile.absolutePath)
 
+
                     // find orientation and rotate if required
-                    val orientation = BitmapHelper.findOrientation(compressedFile)
-                    val rotatedBitmap = BitmapHelper.rotateBitmap(compressedBitmap, orientation)
+                    // val orientation = BitmapHelper.findOrientation(compressedFile)
+                    val rotatedBitmap =
+                        BitmapHelper.rotateBitmap(compressedBitmap, rotation.toFloat())
                     // process bitmap with correct orientation
                     processBitmap(rotatedBitmap)
                 }

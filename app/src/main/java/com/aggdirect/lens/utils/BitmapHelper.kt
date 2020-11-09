@@ -271,7 +271,7 @@ object BitmapHelper {
         }
     }
 
-    private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+    fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
         try {
             val matrix = Matrix()
             matrix.postRotate(angle)
