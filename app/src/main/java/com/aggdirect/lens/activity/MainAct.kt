@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.App
 import com.aggdirect.lens.fragment.ResultInfoDialogFragment
-import com.aggdirect.lens.tensorflow.ImageClassifier
+import com.aggdirect.lens.tensorflow.BoundingBoxDetector
 import com.aggdirect.lens.utils.BitmapHelper
 import com.bumptech.glide.Glide
 import com.github.buchandersenn.android_permission_manager.PermissionManager
@@ -33,13 +33,13 @@ class MainAct : AppCompatActivity() {
     private val permissionManager = PermissionManager.create(this)
 
     private lateinit var capturedBitmap: Bitmap
-    private lateinit var classifier: ImageClassifier
+    private lateinit var classifier: BoundingBoxDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        classifier = ImageClassifier(assets)
+        classifier = BoundingBoxDetector(assets)
         btnGallery.setOnClickListener {
             choosePicture()
         }

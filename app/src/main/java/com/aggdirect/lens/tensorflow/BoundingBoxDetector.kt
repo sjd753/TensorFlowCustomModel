@@ -18,7 +18,7 @@ import java.nio.ByteBuffer
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
-class ImageClassifier constructor(private val assetManager: AssetManager) {
+class BoundingBoxDetector constructor(private val assetManager: AssetManager) {
 
     companion object {
         const val MODEL_PATH = "ticket_scan_v1.tflite"
