@@ -15,6 +15,7 @@ import com.aggdirect.lens.application.App
 import com.aggdirect.lens.fragment.ResultInfoDialogFragment
 import com.aggdirect.lens.tensorflow.ImageClassifier
 import com.aggdirect.lens.utils.BitmapHelper
+import com.bumptech.glide.Glide
 import com.github.buchandersenn.android_permission_manager.PermissionManager
 import com.github.buchandersenn.android_permission_manager.PermissionRequest
 import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
@@ -62,10 +63,10 @@ class MainAct : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        requestStoragePermission()
+        requestPermissions()
     }
 
-    private fun requestStoragePermission() {
+    private fun requestPermissions() {
         // Start building a new request using the with() method.
         // The method takes either a single permission or a list of permissions.
         // Specify multiple permissions in case you need to request both
@@ -73,8 +74,8 @@ class MainAct : AppCompatActivity() {
         permissionManager.with(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.CAMERA
+//            , Manifest.permission.RECORD_AUDIO
         )
             // Optionally, specify a callback handler for all three callbacks
             .onCallback(object : OnPermissionCallback {
@@ -155,10 +156,15 @@ class MainAct : AppCompatActivity() {
             try {
                 val floatArray = data.getFloatArrayExtra("float_array")
                 val photoPath = data.getStringExtra("photo_path")
+                val photoBytes = data.getByteArrayExtra("photo_bytes")
                 //val byteArray = data.getByteArrayExtra("byte_array")
                 photoPath?.let {
                     val bitmap = BitmapFactory.decodeFile(it)
                     imageResult.setImageBitmap(bitmap)
+                }
+                photoBytes?.let {
+                    val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+                    Glide.with(this).load(bitmap).into(imageResult)
                 }
                 // val byteBuffer = classifier.getOutput(this@ImageActivity, bitmap)
                 floatArray?.let {
@@ -173,7 +179,6 @@ class MainAct : AppCompatActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-
         }
     }
 }
