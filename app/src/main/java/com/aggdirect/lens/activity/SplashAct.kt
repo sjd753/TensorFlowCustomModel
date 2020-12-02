@@ -1,6 +1,7 @@
 package com.aggdirect.lens.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -12,7 +13,7 @@ class SplashAct : AppCompatActivity() {
 
     companion object {
         private val TAG: String = SplashAct::class.java.simpleName
-        private const val splashTimeout: Long = 2500
+        private const val splashTimeout: Long = 500
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +22,9 @@ class SplashAct : AppCompatActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         window.decorView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        window.statusBarColor = Color.TRANSPARENT
 
         Handler().postDelayed({
             val intent = Intent(this@SplashAct, MainAct::class.java)

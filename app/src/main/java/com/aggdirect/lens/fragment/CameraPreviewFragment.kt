@@ -46,7 +46,6 @@ class CameraPreviewFragment : Fragment() {
 
     private lateinit var floatArray: FloatArray
     private lateinit var rawBitmap: Bitmap
-    private lateinit var drawnLinesBitmap: Bitmap
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -65,12 +64,12 @@ class CameraPreviewFragment : Fragment() {
 
         view.btn_capture.setOnClickListener {
             Log.e(TAG, "setOnClickListener")
-            if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::drawnLinesBitmap.isInitialized && !drawnLinesBitmap.isRecycled && ::floatArray.isInitialized) {
+            if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::floatArray.isInitialized) {
                 try {
                     // merged bitmap
-                    val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+                    // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
                     // get bytes from compressed bitmap
-                    val bytes = BitmapHelper.compressedBitmapToByteArray(mergedBitmap, 70)
+                    val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
 
                     activity.setResult(
                         Activity.RESULT_OK,
@@ -233,10 +232,8 @@ class CameraPreviewFragment : Fragment() {
         // tensor processing on raw bitmap
         floatArray = detector.processTensor(activity, rawBitmap)
 
-        // recycle bitmap if initialized
-        if (this::drawnLinesBitmap.isInitialized) this.drawnLinesBitmap.recycle()
         // drawn line bitmap transparent background
-        drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+        val drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
 
         // rawBitmap.recycle()
         // drawnLinesBitmap.recycle()

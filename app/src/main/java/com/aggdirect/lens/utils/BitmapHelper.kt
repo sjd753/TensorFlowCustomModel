@@ -17,6 +17,7 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 /**
  * Created by Sajjad Mistri on 24-01-2017.
  */
@@ -320,5 +321,25 @@ object BitmapHelper {
                 "/" +
                 context.resources.getResourceEntryName(drawableResId)
         return Uri.parse(builder)
+    }
+
+    fun resize(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
+        return if (maxHeight > 0 && maxWidth > 0) {
+            val width = bitmap.width
+            val height = bitmap.height
+            val ratioBitmap = width.toFloat() / height.toFloat()
+            val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
+            var finalWidth = maxWidth
+            var finalHeight = maxHeight
+            if (ratioMax > ratioBitmap) {
+                finalWidth = (maxHeight.toFloat() * ratioBitmap).toInt()
+            } else {
+                finalHeight = (maxWidth.toFloat() / ratioBitmap).toInt()
+            }
+            val scaled = Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
+            scaled
+        } else {
+            bitmap
+        }
     }
 }

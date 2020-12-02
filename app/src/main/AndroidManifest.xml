@@ -30,7 +30,7 @@
         </provider>
 
         <activity
-            android:name="com.aggdirect.lens.activity.SplashAct"
+            android:name=".activity.SplashAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -39,17 +39,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aggdirect.lens.activity.MainAct"
+            android:name=".activity.MainAct"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.aggdirect.lens.activity.CameraAct"
+            android:name=".activity.CameraAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
+
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
+        <activity
+            android:name=".activity.PolyCropAct"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

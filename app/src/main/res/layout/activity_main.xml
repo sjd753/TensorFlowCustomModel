@@ -1,72 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtInfo"
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/margin_16"
-            android:gravity="center"
-            android:text="If you want to scan an specified image (low_light.jpg), put the image in the device internal storage and choose it from the gallery button."
-            android:textSize="18sp"
-            app:fontFamily="sans-serif-medium"
-            tools:ignore="HardcodedText" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageResult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true" />
+            android:letterSpacing="0.05"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="28sp"
+            app:layout_constraintBottom_toTopOf="@id/cardGallery"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/margin_24">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnInfo"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardGallery"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:text="View Result Info"
-            android:visibility="gone" />
+            app:cardCornerRadius="@dimen/margin_16"
+            app:cardElevation="@dimen/margin_8"
+            app:cardUseCompatPadding="true">
 
-        <LinearLayout
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_16">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/margin_48"
+                    android:layout_height="@dimen/margin_48"
+                    android:layout_margin="@dimen/margin_16"
+                    app:srcCompat="@drawable/ic_photo_svg" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btnGallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gallery"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCamera"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp">
+            app:cardCornerRadius="@dimen/margin_16"
+            app:cardElevation="@dimen/margin_8"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardGallery">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnGallery"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Gallery" />
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/margin_16">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnCamera"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Camera" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/margin_48"
+                    android:layout_height="@dimen/margin_48"
+                    android:layout_margin="@dimen/margin_16"
+                    app:srcCompat="@drawable/ic_camera" />
 
-        </LinearLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btnCamera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Camera"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 
-</FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_16"
+            android:letterSpacing="0.05"
+            android:text="Choose a photo to get started"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardCamera" />
+
+    </FrameLayout>
+
+</LinearLayout>
