@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Magnifier
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import com.aggdirect.lens.BuildConfig
@@ -42,6 +43,7 @@ class PolyCropLayout : FrameLayout {
     private lateinit var midPointer34: TouchableAppCompatImageView
     private lateinit var midPointer24: TouchableAppCompatImageView
     private lateinit var polyCropLayout: PolyCropLayout
+    private lateinit var magnifier: Magnifier
 
     constructor(context: Context) : super(context) {
         init()
@@ -81,6 +83,13 @@ class PolyCropLayout : FrameLayout {
         addView(midPointer24)
         addView(pointer3)
         addView(pointer4)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                magnifier = Magnifier.Builder(pointer4)
+                    .setCornerRadius(12.0f)
+                    .setDefaultSourceToMagnifierOffset(160, -160).build()
+            }
+        }
         initPaint()
     }
 
@@ -277,6 +286,22 @@ class PolyCropLayout : FrameLayout {
                         v.y = (startPT.y + mv.y)
                         startPT = PointF(v.x, v.y)
                     }
+                    if (::magnifier.isInitialized) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                                val viewPosition = IntArray(2)
+                                v.getLocationOnScreen(viewPosition)
+                                magnifier.show(
+                                    event.rawX - viewPosition[0],
+                                    event.rawY - viewPosition[1]
+                                )
+                                Log.e("onTouch", "rawX " + event.rawX)
+                                Log.e("onTouch", "rawY " + event.rawY)
+                                Log.e("onTouch", "viewPositionX " + viewPosition[0])
+                                Log.e("onTouch", "viewPositionY " + viewPosition[1])
+                            }
+                        }
+                    }
                 }
                 MotionEvent.ACTION_DOWN -> {
                     downPT.x = event.x
@@ -290,6 +315,11 @@ class PolyCropLayout : FrameLayout {
                         ContextCompat.getColor(context, android.R.color.holo_red_light)
                     }
                     paint.color = color
+                    if (::magnifier.isInitialized) {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                            magnifier.dismiss()
+                        }
+                    }
                 }
                 else -> {
                 }
