@@ -1,310 +1,301 @@
-package com.aggdirect.lens.extras;
+package com.aggdirect.lens.extras
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PointF;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-
-import androidx.appcompat.widget.AppCompatImageView;
-
-import com.aggdirect.lens.BuildConfig;
-import com.aggdirect.lens.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PointF
+import android.util.AttributeSet
+import android.util.Log
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
+import com.aggdirect.lens.BuildConfig
+import com.aggdirect.lens.R
+import java.util.*
+import kotlin.math.abs
 
 /**
  * Created by Sajjad on 23/11/20.
  */
-public class PolyCropLayout extends FrameLayout {
+class PolyCropLayout : FrameLayout {
 
-    protected Context context;
-    private Paint paint;
-    private ImageView pointer1;
-    private ImageView pointer2;
-    private ImageView pointer3;
-    private ImageView pointer4;
-    private ImageView midPointer13;
-    private ImageView midPointer12;
-    private ImageView midPointer34;
-    private ImageView midPointer24;
-    private PolyCropLayout polyCropLayout;
-
-    public PolyCropLayout(Context context) {
-        super(context);
-        this.context = context;
-        init();
-    }
-
-    public PolyCropLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.context = context;
-        init();
-    }
-
-    public PolyCropLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        this.context = context;
-        init();
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void init() {
-        polyCropLayout = this;
-        pointer1 = getImageView(0, 0);
-        pointer2 = getImageView(getWidth(), 0);
-        pointer3 = getImageView(0, getHeight());
-        pointer4 = getImageView(getWidth(), getHeight());
-        midPointer13 = getImageView(0, getHeight() / 2);
-        midPointer13.setOnTouchListener(new MidPointTouchListenerImpl(pointer1, pointer3));
-
-        midPointer12 = getImageView(0, getWidth() / 2);
-        midPointer12.setOnTouchListener(new MidPointTouchListenerImpl(pointer1, pointer2));
-
-        midPointer34 = getImageView(0, getHeight() / 2);
-        midPointer34.setOnTouchListener(new MidPointTouchListenerImpl(pointer3, pointer4));
-
-        midPointer24 = getImageView(0, getHeight() / 2);
-        midPointer24.setOnTouchListener(new MidPointTouchListenerImpl(pointer2, pointer4));
-
-        addView(pointer1);
-        addView(pointer2);
-        addView(midPointer13);
-        addView(midPointer12);
-        addView(midPointer34);
-        addView(midPointer24);
-        addView(pointer3);
-        addView(pointer4);
-        initPaint();
-    }
-
-    @Override
-    protected void attachViewToParent(View child, int index, ViewGroup.LayoutParams params) {
-        super.attachViewToParent(child, index, params);
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (BuildConfig.DEBUG) Log.e("PolyView", "onSizeChanged w: " + w);
-        if (BuildConfig.DEBUG) Log.e("PolyView", "onSizeChanged h: " + h);
-    }
-
-    private void initPaint() {
-        paint = new Paint();
-        paint.setColor(getResources().getColor(android.R.color.white));
-        paint.setStrokeWidth(4);
-        paint.setAntiAlias(true);
-    }
-
-    public Map<Integer, PointF> getPoints() {
-
-        List<PointF> points = new ArrayList<PointF>();
-        points.add(new PointF(pointer1.getX(), pointer1.getY()));
-        points.add(new PointF(pointer2.getX(), pointer2.getY()));
-        points.add(new PointF(pointer3.getX(), pointer3.getY()));
-        points.add(new PointF(pointer4.getX(), pointer4.getY()));
-
-        return getOrderedPoints(points);
-    }
-
-    public void setPoints(Map<Integer, PointF> pointFMap) {
-        if (pointFMap.size() == 4) {
-            setPointsCoordinates(pointFMap);
+    private inner class TouchableAppCompatImageView(context: Context) :
+        AppCompatImageView(context) {
+        override fun performClick(): Boolean {
+            super.performClick()
+            return true
         }
     }
 
-    public Map<Integer, PointF> getOrderedPoints(List<PointF> points) {
+    private lateinit var paint: Paint
+    private lateinit var pointer1: TouchableAppCompatImageView
+    private lateinit var pointer2: TouchableAppCompatImageView
+    private lateinit var pointer3: TouchableAppCompatImageView
+    private lateinit var pointer4: TouchableAppCompatImageView
+    private lateinit var midPointer13: TouchableAppCompatImageView
+    private lateinit var midPointer12: TouchableAppCompatImageView
+    private lateinit var midPointer34: TouchableAppCompatImageView
+    private lateinit var midPointer24: TouchableAppCompatImageView
+    private lateinit var polyCropLayout: PolyCropLayout
 
-        PointF centerPoint = new PointF();
-        int size = points.size();
-        for (PointF pointF : points) {
-            centerPoint.x += pointF.x / size;
-            centerPoint.y += pointF.y / size;
+    constructor(context: Context) : super(context) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init()
+    }
+
+    private fun init() {
+        polyCropLayout = this
+        pointer1 = getTouchableImageView(0, 0)
+        pointer2 = getTouchableImageView(width, 0)
+        pointer3 = getTouchableImageView(0, height)
+        pointer4 = getTouchableImageView(width, height)
+        midPointer13 = getTouchableImageView(0, height / 2)
+        midPointer13.setOnTouchListener(MidPointTouchListenerImpl(pointer1, pointer3))
+        midPointer12 = getTouchableImageView(0, width / 2)
+        midPointer12.setOnTouchListener(MidPointTouchListenerImpl(pointer1, pointer2))
+        midPointer34 = getTouchableImageView(0, height / 2)
+        midPointer34.setOnTouchListener(MidPointTouchListenerImpl(pointer3, pointer4))
+        midPointer24 = getTouchableImageView(0, height / 2)
+        midPointer24.setOnTouchListener(MidPointTouchListenerImpl(pointer2, pointer4))
+        addView(pointer1)
+        addView(pointer2)
+        addView(midPointer13)
+        addView(midPointer12)
+        addView(midPointer34)
+        addView(midPointer24)
+        addView(pointer3)
+        addView(pointer4)
+        initPaint()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (BuildConfig.DEBUG) Log.e("PolyView", "onSizeChanged w: $w")
+        if (BuildConfig.DEBUG) Log.e("PolyView", "onSizeChanged h: $h")
+    }
+
+    private fun initPaint() {
+        paint = Paint()
+        paint.color = ContextCompat.getColor(context, android.R.color.white)
+        paint.strokeWidth = 4f
+        paint.isAntiAlias = true
+    }
+
+    var points: Map<Int, PointF>
+        get() {
+            val points: MutableList<PointF> = ArrayList()
+            points.add(PointF(pointer1.x, pointer1.y))
+            points.add(PointF(pointer2.x, pointer2.y))
+            points.add(PointF(pointer3.x, pointer3.y))
+            points.add(PointF(pointer4.x, pointer4.y))
+            return getOrderedPoints(points)
         }
-        Map<Integer, PointF> orderedPoints = new HashMap<>();
-        for (PointF pointF : points) {
-            int index = -1;
+        set(pointFMap) {
+            if (pointFMap.size == 4) {
+                setPointsCoordinates(pointFMap)
+            }
+        }
+
+    private fun getOrderedPoints(points: List<PointF>): Map<Int, PointF> {
+        val centerPoint = PointF()
+        val size = points.size
+        for (pointF in points) {
+            centerPoint.x += pointF.x / size
+            centerPoint.y += pointF.y / size
+        }
+        val orderedPoints: MutableMap<Int, PointF> = HashMap()
+        for (pointF in points) {
+            var index = -1
             if (pointF.x < centerPoint.x && pointF.y < centerPoint.y) {
-                index = 0;
+                index = 0
             } else if (pointF.x > centerPoint.x && pointF.y < centerPoint.y) {
-                index = 1;
+                index = 1
             } else if (pointF.x < centerPoint.x && pointF.y > centerPoint.y) {
-                index = 2;
+                index = 2
             } else if (pointF.x > centerPoint.x && pointF.y > centerPoint.y) {
-                index = 3;
+                index = 3
             }
-            orderedPoints.put(index, pointF);
+            orderedPoints[index] = pointF
         }
-        return orderedPoints;
+        return orderedPoints
     }
 
-    private void setPointsCoordinates(Map<Integer, PointF> pointFMap) {
-        pointer1.setX(pointFMap.get(0).x - 12);
-        pointer1.setY(pointFMap.get(0).y - 12);
-
-        pointer2.setX(pointFMap.get(1).x - 12);
-        pointer2.setY(pointFMap.get(1).y - 12);
-
-        pointer3.setX(pointFMap.get(2).x - 12);
-        pointer3.setY(pointFMap.get(2).y - 12);
-
-        pointer4.setX(pointFMap.get(3).x - 12);
-        pointer4.setY(pointFMap.get(3).y - 12);
+    private fun setPointsCoordinates(pointFMap: Map<Int, PointF>) {
+        pointer1.x = pointFMap.getValue(0).x - 12
+        pointer1.y = pointFMap.getValue(0).y - 12
+        pointer2.x = pointFMap.getValue(1).x - 12
+        pointer2.y = pointFMap.getValue(1).y - 12
+        pointer3.x = pointFMap.getValue(2).x - 12
+        pointer3.y = pointFMap.getValue(2).y - 12
+        pointer4.x = pointFMap.getValue(3).x - 12
+        pointer4.y = pointFMap.getValue(3).y - 12
     }
 
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
-        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2), pointer1.getY() + (pointer1.getHeight() / 2), pointer3.getX() + (pointer3.getWidth() / 2), pointer3.getY() + (pointer3.getHeight() / 2), paint);
-        canvas.drawLine(pointer1.getX() + (pointer1.getWidth() / 2), pointer1.getY() + (pointer1.getHeight() / 2), pointer2.getX() + (pointer2.getWidth() / 2), pointer2.getY() + (pointer2.getHeight() / 2), paint);
-        canvas.drawLine(pointer2.getX() + (pointer2.getWidth() / 2), pointer2.getY() + (pointer2.getHeight() / 2), pointer4.getX() + (pointer4.getWidth() / 2), pointer4.getY() + (pointer4.getHeight() / 2), paint);
-        canvas.drawLine(pointer3.getX() + (pointer3.getWidth() / 2), pointer3.getY() + (pointer3.getHeight() / 2), pointer4.getX() + (pointer4.getWidth() / 2), pointer4.getY() + (pointer4.getHeight() / 2), paint);
-        midPointer13.setX(pointer3.getX() - ((pointer3.getX() - pointer1.getX()) / 2));
-        midPointer13.setY(pointer3.getY() - ((pointer3.getY() - pointer1.getY()) / 2));
-        midPointer24.setX(pointer4.getX() - ((pointer4.getX() - pointer2.getX()) / 2));
-        midPointer24.setY(pointer4.getY() - ((pointer4.getY() - pointer2.getY()) / 2));
-        midPointer34.setX(pointer4.getX() - ((pointer4.getX() - pointer3.getX()) / 2));
-        midPointer34.setY(pointer4.getY() - ((pointer4.getY() - pointer3.getY()) / 2));
-        midPointer12.setX(pointer2.getX() - ((pointer2.getX() - pointer1.getX()) / 2));
-        midPointer12.setY(pointer2.getY() - ((pointer2.getY() - pointer1.getY()) / 2));
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+        canvas.drawLine(
+            pointer1.x + pointer1.width / 2,
+            pointer1.y + pointer1.height / 2,
+            pointer3.x + pointer3.width / 2,
+            pointer3.y + pointer3.height / 2,
+            paint
+        )
+        canvas.drawLine(
+            pointer1.x + pointer1.width / 2,
+            pointer1.y + pointer1.height / 2,
+            pointer2.x + pointer2.width / 2,
+            pointer2.y + pointer2.height / 2,
+            paint
+        )
+        canvas.drawLine(
+            pointer2.x + pointer2.width / 2,
+            pointer2.y + pointer2.height / 2,
+            pointer4.x + pointer4.width / 2,
+            pointer4.y + pointer4.height / 2,
+            paint
+        )
+        canvas.drawLine(
+            pointer3.x + pointer3.width / 2,
+            pointer3.y + pointer3.height / 2,
+            pointer4.x + pointer4.width / 2,
+            pointer4.y + pointer4.height / 2,
+            paint
+        )
+        midPointer13.x = pointer3.x - (pointer3.x - pointer1.x) / 2
+        midPointer13.y = pointer3.y - (pointer3.y - pointer1.y) / 2
+        midPointer24.x = pointer4.x - (pointer4.x - pointer2.x) / 2
+        midPointer24.y = pointer4.y - (pointer4.y - pointer2.y) / 2
+        midPointer34.x = pointer4.x - (pointer4.x - pointer3.x) / 2
+        midPointer34.y = pointer4.y - (pointer4.y - pointer3.y) / 2
+        midPointer12.x = pointer2.x - (pointer2.x - pointer1.x) / 2
+        midPointer12.y = pointer2.y - (pointer2.y - pointer1.y) / 2
     }
 
-
-    private AppCompatImageView getImageView(int x, int y) {
-        AppCompatImageView compatImageView = new AppCompatImageView(context);
-        LayoutParams layoutParams = new LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.NO_GRAVITY);
-        compatImageView.setLayoutParams(layoutParams);
-        compatImageView.setImageResource(R.drawable.shape_circle_white_24dp);
-        compatImageView.setX(x);
-        compatImageView.setY(y);
-        compatImageView.setOnTouchListener(new TouchListenerImpl());
-        return compatImageView;
+    private fun getTouchableImageView(x: Int, y: Int): TouchableAppCompatImageView {
+        val compatImageView = TouchableAppCompatImageView(context)
+        val layoutParams =
+            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.NO_GRAVITY)
+        compatImageView.layoutParams = layoutParams
+        compatImageView.setImageResource(R.drawable.shape_circle_white_24dp)
+        compatImageView.x = x.toFloat()
+        compatImageView.y = y.toFloat()
+        compatImageView.setOnTouchListener(TouchListenerImpl())
+        return compatImageView
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+    fun isValidShape(pointFMap: Map<Int, PointF>): Boolean {
+        return pointFMap.size == 4
     }
 
-    public boolean isValidShape(Map<Integer, PointF> pointFMap) {
-        return pointFMap.size() == 4;
-    }
+    private inner class MidPointTouchListenerImpl(
+        private val mainPointer1: ImageView?,
+        private val mainPointer2: ImageView?
+    ) : OnTouchListener {
+        var downPT = PointF() // Record Mouse Position When Pressed Down
+        var startPT = PointF() // Record Start Position of 'img'
 
-    private class MidPointTouchListenerImpl implements OnTouchListener {
-
-        PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-        PointF StartPT = new PointF(); // Record Start Position of 'img'
-
-        private ImageView mainPointer1;
-        private ImageView mainPointer2;
-
-        public MidPointTouchListenerImpl(ImageView mainPointer1, ImageView mainPointer2) {
-            this.mainPointer1 = mainPointer1;
-            this.mainPointer2 = mainPointer2;
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            int eid = event.getAction();
-            switch (eid) {
-                case MotionEvent.ACTION_MOVE:
-                    PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
-
-                    if (Math.abs(mainPointer1.getX() - mainPointer2.getX()) > Math.abs(mainPointer1.getY() - mainPointer2.getY())) {
-                        if (((mainPointer2.getY() + mv.y + v.getHeight() < polyCropLayout.getHeight()) && (mainPointer2.getY() + mv.y > 0))) {
-                            v.setX((int) (StartPT.y + mv.y));
-                            StartPT = new PointF(v.getX(), v.getY());
-                            mainPointer2.setY((int) (mainPointer2.getY() + mv.y));
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    val mv = PointF(event.x - downPT.x, event.y - downPT.y)
+                    if (abs(mainPointer1!!.x - mainPointer2!!.x) > abs(
+                            mainPointer1.y - mainPointer2.y
+                        )
+                    ) {
+                        if (mainPointer2.y + mv.y + v.height < polyCropLayout.height && mainPointer2.y + mv.y > 0) {
+                            v.x = (startPT.y + mv.y)
+                            startPT = PointF(v.x, v.y)
+                            mainPointer2.y = (mainPointer2.y + mv.y)
                         }
-                        if (((mainPointer1.getY() + mv.y + v.getHeight() < polyCropLayout.getHeight()) && (mainPointer1.getY() + mv.y > 0))) {
-                            v.setX((int) (StartPT.y + mv.y));
-                            StartPT = new PointF(v.getX(), v.getY());
-                            mainPointer1.setY((int) (mainPointer1.getY() + mv.y));
+                        if (mainPointer1.y + mv.y + v.height < polyCropLayout.height && mainPointer1.y + mv.y > 0) {
+                            v.x = (startPT.y + mv.y)
+                            startPT = PointF(v.x, v.y)
+                            mainPointer1.y = (mainPointer1.y + mv.y)
                         }
                     } else {
-                        if ((mainPointer2.getX() + mv.x + v.getWidth() < polyCropLayout.getWidth()) && (mainPointer2.getX() + mv.x > 0)) {
-                            v.setX((int) (StartPT.x + mv.x));
-                            StartPT = new PointF(v.getX(), v.getY());
-                            mainPointer2.setX((int) (mainPointer2.getX() + mv.x));
+                        if (mainPointer2.x + mv.x + v.width < polyCropLayout.width && mainPointer2.x + mv.x > 0) {
+                            v.x = (startPT.x + mv.x)
+                            startPT = PointF(v.x, v.y)
+                            mainPointer2.x = (mainPointer2.x + mv.x)
                         }
-                        if ((mainPointer1.getX() + mv.x + v.getWidth() < polyCropLayout.getWidth()) && (mainPointer1.getX() + mv.x > 0)) {
-                            v.setX((int) (StartPT.x + mv.x));
-                            StartPT = new PointF(v.getX(), v.getY());
-                            mainPointer1.setX((int) (mainPointer1.getX() + mv.x));
+                        if (mainPointer1.x + mv.x + v.width < polyCropLayout.width && mainPointer1.x + mv.x > 0) {
+                            v.x = (startPT.x + mv.x)
+                            startPT = PointF(v.x, v.y)
+                            mainPointer1.x = (mainPointer1.x + mv.x)
                         }
                     }
-
-                    break;
-                case MotionEvent.ACTION_DOWN:
-                    DownPT.x = event.getX();
-                    DownPT.y = event.getY();
-                    StartPT = new PointF(v.getX(), v.getY());
-                    break;
-                case MotionEvent.ACTION_UP:
-                    int color = 0;
-                    if (isValidShape(getPoints())) {
-                        color = getResources().getColor(android.R.color.white);
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    downPT.x = event.x
+                    downPT.y = event.y
+                    startPT = PointF(v.x, v.y)
+                }
+                MotionEvent.ACTION_UP -> {
+                    val color: Int = if (isValidShape(points)) {
+                        ContextCompat.getColor(context, android.R.color.white)
                     } else {
-                        color = getResources().getColor(android.R.color.holo_red_light);
+                        ContextCompat.getColor(context, android.R.color.holo_red_light)
                     }
-                    paint.setColor(color);
-                    break;
-                default:
-                    break;
+                    paint.color = color
+                }
+                else -> {
+                }
             }
-            polyCropLayout.invalidate();
-            return true;
+            polyCropLayout.invalidate()
+            return true
         }
     }
 
-    private class TouchListenerImpl implements OnTouchListener {
+    private inner class TouchListenerImpl : OnTouchListener {
+        var downPT = PointF() // Record Mouse Position When Pressed Down
+        var startPT = PointF() // Record Start Position of 'img'
 
-        PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-        PointF StartPT = new PointF(); // Record Start Position of 'img'
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            int eid = event.getAction();
-            switch (eid) {
-                case MotionEvent.ACTION_MOVE:
-                    PointF mv = new PointF(event.getX() - DownPT.x, event.getY() - DownPT.y);
-                    if (((StartPT.x + mv.x + v.getWidth()) < polyCropLayout.getWidth() && (StartPT.y + mv.y + v.getHeight() < polyCropLayout.getHeight())) && ((StartPT.x + mv.x) > 0 && StartPT.y + mv.y > 0)) {
-                        v.setX((int) (StartPT.x + mv.x));
-                        v.setY((int) (StartPT.y + mv.y));
-                        StartPT = new PointF(v.getX(), v.getY());
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    val mv = PointF(event.x - downPT.x, event.y - downPT.y)
+                    if (startPT.x + mv.x + v.width < polyCropLayout.width && startPT.y + mv.y + v.height < polyCropLayout.height && startPT.x + mv.x > 0 && startPT.y + mv.y > 0) {
+                        v.x = (startPT.x + mv.x)
+                        v.y = (startPT.y + mv.y)
+                        startPT = PointF(v.x, v.y)
                     }
-                    break;
-                case MotionEvent.ACTION_DOWN:
-                    DownPT.x = event.getX();
-                    DownPT.y = event.getY();
-                    StartPT = new PointF(v.getX(), v.getY());
-                    break;
-                case MotionEvent.ACTION_UP:
-                    int color = 0;
-                    if (isValidShape(getPoints())) {
-                        color = getResources().getColor(android.R.color.white);
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    downPT.x = event.x
+                    downPT.y = event.y
+                    startPT = PointF(v.x, v.y)
+                }
+                MotionEvent.ACTION_UP -> {
+                    val color = if (isValidShape(points)) {
+                        ContextCompat.getColor(context, android.R.color.white)
                     } else {
-                        color = getResources().getColor(android.R.color.holo_red_light);
+                        ContextCompat.getColor(context, android.R.color.holo_red_light)
                     }
-                    paint.setColor(color);
-                    break;
-                default:
-                    break;
+                    paint.color = color
+                }
+                else -> {
+                }
             }
-            polyCropLayout.invalidate();
-            return true;
+            polyCropLayout.invalidate()
+            return true
         }
     }
 }
