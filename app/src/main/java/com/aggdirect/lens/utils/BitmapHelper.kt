@@ -133,7 +133,7 @@ object BitmapHelper {
         //        compositeImageView.setImageBitmap(resultingImage);
     }
 
-    fun drawBitmapByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
+    fun drawLinesByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
         if (array.isEmpty() || array.size != 8) throw IllegalArgumentException("float array must contain 8 elements")
 
         val resultingImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
@@ -181,6 +181,36 @@ object BitmapHelper {
 
 //        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
 //        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        return resultingImage
+    }
+
+    fun drawBitmapByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
+        if (array.isEmpty() || array.size != 8) throw IllegalArgumentException("float array must contain 8 elements")
+
+        val resultingImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+        //
+        val canvas = Canvas(resultingImage)
+        //
+        val paint = Paint()
+        paint.strokeWidth = 1f
+        paint.pathEffect = null
+        paint.color = Color.RED
+        paint.style = Paint.Style.FILL
+        paint.isAntiAlias = true
+
+        val path = Path()
+        path.moveTo(array[0], array[1])
+        path.lineTo(array[0], array[1])
+        path.lineTo(array[2], array[3])
+        path.lineTo(array[6], array[7])
+        path.lineTo(array[4], array[5])
+        path.lineTo(array[0], array[1])
+
+        canvas.drawPath(path, paint)
+
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
         return resultingImage
     }

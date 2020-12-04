@@ -6,8 +6,10 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
+import com.aggdirect.lens.application.AppFileManager
 import com.aggdirect.lens.utils.BitmapHelper
 import kotlinx.android.synthetic.main.activity_poly_crop.*
 
@@ -29,6 +31,39 @@ class PolyCropAct : AppCompatActivity() {
                 val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
                 setPoints(scaledFloatArray, photoBytes)
+                // button click events
+                btnSaveOriginal.setOnClickListener {
+                    val file = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                btnSaveCropped.setOnClickListener {
+                    val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+                    val pointFs = polygonView.points
+                    val array = floatArrayOf(
+                        pointFs.getValue(0).x,
+                        pointFs.getValue(0).y,
+                        pointFs.getValue(1).x,
+                        pointFs.getValue(1).y,
+                        pointFs.getValue(2).x,
+                        pointFs.getValue(2).y,
+                        pointFs.getValue(3).x,
+                        pointFs.getValue(3).y,
+                    )
+                    val cropped = BitmapHelper.drawBitmapByPoints(bitmap, array)
+                    val file = BitmapHelper.bitmapToFile(
+                        cropped,
+                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
+                    )
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

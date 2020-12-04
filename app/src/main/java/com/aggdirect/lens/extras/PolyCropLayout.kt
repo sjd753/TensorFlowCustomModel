@@ -100,10 +100,10 @@ class PolyCropLayout : FrameLayout {
     var points: Map<Int, PointF>
         get() {
             val points: MutableList<PointF> = ArrayList()
-            points.add(PointF(pointer1.x, pointer1.y))
-            points.add(PointF(pointer2.x, pointer2.y))
-            points.add(PointF(pointer3.x, pointer3.y))
-            points.add(PointF(pointer4.x, pointer4.y))
+            points.add(PointF(pointer1.x + 24, pointer1.y + 24))
+            points.add(PointF(pointer2.x + 24, pointer2.y + 24))
+            points.add(PointF(pointer3.x + 24, pointer3.y + 24))
+            points.add(PointF(pointer4.x + 24, pointer4.y + 24))
             return getOrderedPoints(points)
         }
         set(pointFMap) {

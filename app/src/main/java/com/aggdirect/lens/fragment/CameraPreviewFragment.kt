@@ -233,7 +233,7 @@ class CameraPreviewFragment : Fragment() {
         floatArray = detector.processTensor(activity, rawBitmap)
 
         // drawn line bitmap transparent background
-        val drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+        val drawnLinesBitmap = BitmapHelper.drawLinesByPoints(rawBitmap, floatArray)
 
         // rawBitmap.recycle()
         // drawnLinesBitmap.recycle()
