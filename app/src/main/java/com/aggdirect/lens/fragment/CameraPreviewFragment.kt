@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.*
 import android.hardware.display.DisplayManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -185,7 +186,7 @@ class CameraPreviewFragment : Fragment() {
                 .setTargetRotation(Surface.ROTATION_0)
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, BoundingBoxAnalyzer { bitmap ->
+                    it.setAnalyzer(cameraExecutor, BoundingBoxAnalyzer(activity) { bitmap ->
                         Log.d(TAG, "BoundingBoxAnalyzer callback")
                         // process bitmap with correct orientation
                         processBitmap(bitmap)
@@ -244,7 +245,10 @@ class CameraPreviewFragment : Fragment() {
         }
     }
 
-    private class BoundingBoxAnalyzer(private val listener: boundingBoxListener) :
+    private class BoundingBoxAnalyzer(
+        private val activity: AppCompatActivity,
+        private val listener: boundingBoxListener
+    ) :
         ImageAnalysis.Analyzer {
 
         private fun ByteBuffer.toByteArray(): ByteArray {
@@ -286,6 +290,19 @@ class CameraPreviewFragment : Fragment() {
             return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         }
 
+        private fun createScaledBitmap(bitmap: Bitmap): Bitmap {
+            // display metrics
+            val displayMetrics = DisplayMetrics()
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val height = displayMetrics.heightPixels
+            val width = displayMetrics.widthPixels
+
+            val projectedHeight = width * bitmap.height / bitmap.width
+            Log.e("result", "projectedHeight h: $projectedHeight")
+
+            return Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
+        }
+
         override fun analyze(image: ImageProxy) {
             Log.e(TAG, "analyze: image format: ${image.format}")
             when (image.format) {
@@ -299,8 +316,10 @@ class CameraPreviewFragment : Fragment() {
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
                         BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                    // scale bitmap according to screen resolution width
+                    val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener
-                    listener(rotatedBitmap)
+                    listener(scaled)
                 }
                 ImageFormat.YUV_420_888 -> {
                     Log.e(TAG, "analyze: image format: YUV_420_888")
@@ -312,8 +331,10 @@ class CameraPreviewFragment : Fragment() {
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
                         BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                    // scale bitmap according to screen resolution width
+                    val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener
-                    listener(rotatedBitmap)
+                    listener(scaled)
                 }
             }
             // close image proxy

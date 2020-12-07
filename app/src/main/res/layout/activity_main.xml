@@ -53,7 +53,8 @@
                     android:layout_width="@dimen/margin_48"
                     android:layout_height="@dimen/margin_48"
                     android:layout_margin="@dimen/margin_16"
-                    app:srcCompat="@drawable/ic_photo_svg" />
+                    app:srcCompat="@drawable/ic_photo_svg"
+                    app:tint="@android:color/holo_green_light" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btnGallery"
@@ -91,7 +92,8 @@
                     android:layout_width="@dimen/margin_48"
                     android:layout_height="@dimen/margin_48"
                     android:layout_margin="@dimen/margin_16"
-                    app:srcCompat="@drawable/ic_camera" />
+                    app:srcCompat="@drawable/ic_camera"
+                    app:tint="@color/colorPrimary" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btnCamera"
@@ -127,5 +129,15 @@
             app:layout_constraintTop_toBottomOf="@id/cardCamera" />
 
     </FrameLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/txtVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_16"
+        android:letterSpacing="0.05"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
 </LinearLayout>

@@ -28,9 +28,10 @@ class PolyCropAct : AppCompatActivity() {
             val floatArray = intent.getFloatArrayExtra("float_array")!!
             val photoBytes = intent.getByteArrayExtra("photo_bytes")!!
             frameLayout.post {
-                val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
+                // scaling not needed anymore as float array is generated on scaled bitmap
+                // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
-                setPoints(scaledFloatArray, photoBytes)
+                setPoints(floatArray, photoBytes)
                 // button click events
                 btnSaveOriginal.setOnClickListener {
                     val file = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
