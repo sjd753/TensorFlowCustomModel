@@ -141,11 +141,10 @@ object BitmapHelper {
         val canvas = Canvas(resultingImage)
         //
         val paint = Paint()
-        paint.strokeWidth = 3f
         paint.pathEffect = null
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 16f
+        paint.strokeWidth = 8f
         paint.isAntiAlias = true
 
         // val path = Path()
