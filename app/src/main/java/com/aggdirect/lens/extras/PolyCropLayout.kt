@@ -100,10 +100,10 @@ class PolyCropLayout : FrameLayout {
     var points: Map<Int, PointF>
         get() {
             val points: MutableList<PointF> = ArrayList()
-            points.add(PointF(pointer1.x + 24, pointer1.y + 24))
-            points.add(PointF(pointer2.x + 24, pointer2.y + 24))
-            points.add(PointF(pointer3.x + 24, pointer3.y + 24))
-            points.add(PointF(pointer4.x + 24, pointer4.y + 24))
+            points.add(PointF(pointer1.x + pointer1.width / 2, pointer1.y + pointer1.height / 2))
+            points.add(PointF(pointer2.x + pointer2.width / 2, pointer2.y + pointer2.height / 2))
+            points.add(PointF(pointer3.x + pointer3.width / 2, pointer3.y + pointer3.height / 2))
+            points.add(PointF(pointer4.x + pointer4.width / 2, pointer4.y + pointer4.height / 2))
             return getOrderedPoints(points)
         }
         set(pointFMap) {
@@ -137,14 +137,14 @@ class PolyCropLayout : FrameLayout {
     }
 
     private fun setPointsCoordinates(pointFMap: Map<Int, PointF>) {
-        pointer1.x = pointFMap.getValue(0).x - 12
-        pointer1.y = pointFMap.getValue(0).y - 12
-        pointer2.x = pointFMap.getValue(1).x - 12
-        pointer2.y = pointFMap.getValue(1).y - 12
-        pointer3.x = pointFMap.getValue(2).x - 12
-        pointer3.y = pointFMap.getValue(2).y - 12
-        pointer4.x = pointFMap.getValue(3).x - 12
-        pointer4.y = pointFMap.getValue(3).y - 12
+        pointer1.x = pointFMap.getValue(0).x - pointer1.width / 2
+        pointer1.y = pointFMap.getValue(0).y - pointer1.height / 2
+        pointer2.x = pointFMap.getValue(1).x - pointer2.width / 2
+        pointer2.y = pointFMap.getValue(1).y - pointer2.height / 2
+        pointer3.x = pointFMap.getValue(2).x - pointer3.width / 2
+        pointer3.y = pointFMap.getValue(2).y - pointer3.height / 2
+        pointer4.x = pointFMap.getValue(3).x - pointer4.width / 2
+        pointer4.y = pointFMap.getValue(3).y - pointer4.height / 2
     }
 
     override fun dispatchDraw(canvas: Canvas) {
