@@ -21,7 +21,7 @@ import java.nio.channels.FileChannel
 class BoundingBoxDetector constructor(private val assetManager: AssetManager) {
 
     companion object {
-        const val MODEL_PATH = "ticket_scan_v1.tflite"
+        const val MODEL_PATH = "ticket_scan_v2.tflite"
 
         const val INPUT_SIZE = 224
         const val MAX_RESULTS = 3
