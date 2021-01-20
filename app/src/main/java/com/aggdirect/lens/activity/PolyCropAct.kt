@@ -7,17 +7,26 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.AppFileManager
+import com.aggdirect.lens.opencv.perspectiveTransform
 import com.aggdirect.lens.utils.BitmapHelper
 import kotlinx.android.synthetic.main.activity_poly_crop.*
+import org.opencv.android.OpenCVLoader
+import org.opencv.core.Point
 
 
 class PolyCropAct : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_poly_crop)
+
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+            OpenCVLoader.initDebug()
+        }
 
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
@@ -64,6 +73,37 @@ class PolyCropAct : AppCompatActivity() {
                         "File saved at ${file.absolutePath}",
                         Toast.LENGTH_LONG
                     ).show()
+                    // EXPERIMENTAL CODE
+                    ivImage.setImageBitmap(cropped)
+                    AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
+                        .setPositiveButton("Apply") { dialog, which ->
+                            val transformed = cropped.perspectiveTransform(
+                                listOf(
+                                    Point(
+                                        pointFs.getValue(0).x.toDouble(),
+                                        pointFs.getValue(0).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(1).x.toDouble(),
+                                        pointFs.getValue(1).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(2).x.toDouble(),
+                                        pointFs.getValue(2).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(3).x.toDouble(),
+                                        pointFs.getValue(3).y.toDouble()
+                                    )
+                                )
+                            )
+                            ivImage.setImageBitmap(transformed)
+                        }
+                        .setNegativeButton("Cancel") { dialog, which ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                    // EXPERIMENTAL CODE
                 }
             }
         }
