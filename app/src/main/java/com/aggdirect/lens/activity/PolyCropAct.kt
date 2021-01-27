@@ -19,6 +19,8 @@ import org.opencv.core.Point
 
 
 class PolyCropAct : AppCompatActivity() {
+    private lateinit var croppedBitmap: Bitmap
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_poly_crop)
@@ -50,6 +52,7 @@ class PolyCropAct : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
                 btnSaveCropped.setOnClickListener {
                     val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
                     val pointFs = polygonView.points
@@ -63,9 +66,9 @@ class PolyCropAct : AppCompatActivity() {
                         pointFs.getValue(3).x,
                         pointFs.getValue(3).y,
                     )
-                    val cropped = BitmapHelper.drawBitmapByPoints(bitmap, array)
+                    croppedBitmap = BitmapHelper.drawBitmapByPoints(bitmap, array)
                     val file = BitmapHelper.bitmapToFile(
-                        cropped,
+                        croppedBitmap,
                         AppFileManager.makeAppDir(getString(R.string.app_name))!!
                     )
                     Toast.makeText(
@@ -74,10 +77,11 @@ class PolyCropAct : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                     // EXPERIMENTAL CODE
-                    ivImage.setImageBitmap(cropped)
-                    AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
+                    ivImage.setImageBitmap(croppedBitmap)
+                    btnApplyPT.visibility = View.VISIBLE
+                    /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
                         .setPositiveButton("Apply") { dialog, which ->
-                            val transformed = cropped.perspectiveTransform(
+                            val transformed = croppedBitmap.perspectiveTransform(
                                 listOf(
                                     Point(
                                         pointFs.getValue(0).x.toDouble(),
@@ -103,7 +107,33 @@ class PolyCropAct : AppCompatActivity() {
                             dialog.dismiss()
                         }
                         .show()
-                    // EXPERIMENTAL CODE
+                    // EXPERIMENTAL CODE*/
+                }
+
+                btnApplyPT.setOnClickListener {
+                    val pointFs = polygonView.points
+                    val transformed = croppedBitmap.perspectiveTransform(
+                        listOf(
+                            Point(
+                                pointFs.getValue(0).x.toDouble(),
+                                pointFs.getValue(0).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(1).x.toDouble(),
+                                pointFs.getValue(1).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(2).x.toDouble(),
+                                pointFs.getValue(2).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(3).x.toDouble(),
+                                pointFs.getValue(3).y.toDouble()
+                            )
+                        )
+                    )
+                    ivImage.setImageBitmap(transformed)
+                    btnApplyPT.visibility = View.GONE
                 }
             }
         }
