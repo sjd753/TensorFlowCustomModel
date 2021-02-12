@@ -162,8 +162,8 @@ class PolyCropAct : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
-        Log.e("result", "display w: " + width)
-        Log.e("result", "display h: " + height)
+        Log.e("result", "display w: $width")
+        Log.e("result", "display h: $height")
 
         val projectedHeight = width * bitmap.height / bitmap.width
 
