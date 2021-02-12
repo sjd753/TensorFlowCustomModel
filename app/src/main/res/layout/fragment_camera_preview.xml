@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_grey"
+    android:background="@android:color/black"
     tools:context=".fragment.CameraPreviewFragment">
 
     <FrameLayout
@@ -50,51 +50,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/viewCropToggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="invisible">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/ivGuidelineToggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_crop_square_black"
-                    android:tint="@android:color/white" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtGuidelineToggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Square"
-                    android:textColor="@android:color/white" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/checkboxCompress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@android:color/white"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
@@ -109,26 +64,25 @@
 
         </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="invisible">
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnGallery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="@dimen/margin_16"
-                android:text="Gallery"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
-
-        </LinearLayout>
-
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/margin_8"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/controlsView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/black_overlay_dark"
+            android:padding="@dimen/margin_16"
+            android:text="Capture a document"
+            android:textAllCaps="false" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

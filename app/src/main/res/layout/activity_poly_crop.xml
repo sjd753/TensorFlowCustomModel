@@ -4,6 +4,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context=".activity.PolyCropAct">
 
     <FrameLayout
@@ -34,20 +35,36 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/margin_16"
+            android:text="Cancel"
+            android:textAllCaps="false" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSaveOriginal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Save Original" />
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/margin_16"
+            android:text="Save Original"
+            android:textAllCaps="false"
+            android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSaveCropped"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Save Cropped" />
+            android:background="?selectableItemBackground"
+            android:padding="@dimen/margin_16"
+            android:text="Save Cropped"
+            android:textAllCaps="false"
+            android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnApplyPT"

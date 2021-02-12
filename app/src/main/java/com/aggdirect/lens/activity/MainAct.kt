@@ -34,8 +34,7 @@ class MainAct : AppCompatActivity() {
 
     private val permissionManager = PermissionManager.create(this)
 
-    private lateinit var capturedBitmap: Bitmap
-    private lateinit var classifier: BoundingBoxDetector
+    private lateinit var detector: BoundingBoxDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,7 @@ class MainAct : AppCompatActivity() {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
-        classifier = BoundingBoxDetector(assets)
+        detector = BoundingBoxDetector(assets)
 
         val version = "version: ${BuildConfig.VERSION_NAME}"
         txtVersion.text = version
@@ -149,10 +148,10 @@ class MainAct : AppCompatActivity() {
                 val width = displayMetrics.widthPixels
 
                 val projectedHeight = width * bitmap.height / bitmap.width
-                Log.e("result", "projectedHeight h: " + projectedHeight)
+                Log.e("result", "projectedHeight h: $projectedHeight")
 
                 val scaled = Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
-                val floatArray = classifier.processTensor(this@MainAct, scaled)
+                val floatArray = detector.processTensor(this@MainAct, scaled)
 
                 // get bytes from compressed bitmap
                 val compressedPhotoBytes = BitmapHelper.compressedBitmapToByteArray(scaled, 70)

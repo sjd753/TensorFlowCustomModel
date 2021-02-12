@@ -85,14 +85,14 @@ class CameraPreviewFragment : Fragment() {
             }
         }
 
-        view.btnGallery.setOnClickListener {
-            val intent = Intent().apply {
-                action = Intent.ACTION_VIEW
-                type = "image/*"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        }
+//        view.btnGallery.setOnClickListener {
+//            val intent = Intent().apply {
+//                action = Intent.ACTION_VIEW
+//                type = "image/*"
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            }
+//            startActivity(intent)
+//        }
 
         return view
     }

@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.AppFileManager
@@ -44,6 +43,9 @@ class PolyCropAct : AppCompatActivity() {
                 // set point on the bitmap
                 setPoints(floatArray, photoBytes)
                 // button click events
+                btnCancel.setOnClickListener {
+                    finish()
+                }
                 btnSaveOriginal.setOnClickListener {
                     val file = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
                     Toast.makeText(
@@ -76,8 +78,11 @@ class PolyCropAct : AppCompatActivity() {
                         "File saved at ${file.absolutePath}",
                         Toast.LENGTH_LONG
                     ).show()
-                    // EXPERIMENTAL CODE
+                    // set cropped bitmap and update buttons
                     ivImage.setImageBitmap(croppedBitmap)
+                    polygonView.visibility = View.GONE
+                    btnSaveOriginal.visibility = View.GONE
+                    btnSaveCropped.visibility = View.GONE
                     btnApplyPT.visibility = View.VISIBLE
                     /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
                         .setPositiveButton("Apply") { dialog, which ->
@@ -134,6 +139,17 @@ class PolyCropAct : AppCompatActivity() {
                     )
                     ivImage.setImageBitmap(transformed)
                     btnApplyPT.visibility = View.GONE
+                    btnCancel.text = "Done"
+                    // save transformed bitmap as file
+                    val file = BitmapHelper.bitmapToFile(
+                        transformed,
+                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
+                    )
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
