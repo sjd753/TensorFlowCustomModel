@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
@@ -47,6 +48,8 @@ class CameraPreviewFragment : Fragment() {
 
     private lateinit var floatArray: FloatArray
     private lateinit var rawBitmap: Bitmap
+    private lateinit var camera: Camera
+    private var torchEnabled = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -82,6 +85,15 @@ class CameraPreviewFragment : Fragment() {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+            }
+        }
+
+        view.btnFlash.setOnClickListener {
+            if (::camera.isInitialized && camera.cameraInfo.hasFlashUnit()) {
+                torchEnabled = !torchEnabled
+                camera.cameraControl.enableTorch(torchEnabled)
+                val drawable = if (torchEnabled) R.drawable.ic_torch else R.drawable.ic_flash_off
+                view.btnFlash.setImageResource(drawable)
             }
         }
 
@@ -201,7 +213,7 @@ class CameraPreviewFragment : Fragment() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageAnalyzer
                 )
 
