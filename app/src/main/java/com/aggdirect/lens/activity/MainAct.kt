@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.aggdirect.lens.BuildConfig
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.App
 import com.aggdirect.lens.tensorflow.BoundingBoxDetector
@@ -33,8 +34,7 @@ class MainAct : AppCompatActivity() {
 
     private val permissionManager = PermissionManager.create(this)
 
-    private lateinit var capturedBitmap: Bitmap
-    private lateinit var classifier: BoundingBoxDetector
+    private lateinit var detector: BoundingBoxDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,10 @@ class MainAct : AppCompatActivity() {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
-        classifier = BoundingBoxDetector(assets)
+        detector = BoundingBoxDetector(assets)
+
+        val version = "version: ${BuildConfig.VERSION_NAME}"
+        txtVersion.text = version
         cardGallery.setOnClickListener {
             choosePicture()
         }
@@ -145,10 +148,10 @@ class MainAct : AppCompatActivity() {
                 val width = displayMetrics.widthPixels
 
                 val projectedHeight = width * bitmap.height / bitmap.width
-                Log.e("result", "projectedHeight h: " + projectedHeight)
+                Log.e("result", "projectedHeight h: $projectedHeight")
 
                 val scaled = Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
-                val floatArray = classifier.processTensor(this@MainAct, scaled)
+                val floatArray = detector.processTensor(this@MainAct, scaled)
 
                 // get bytes from compressed bitmap
                 val compressedPhotoBytes = BitmapHelper.compressedBitmapToByteArray(scaled, 70)
@@ -162,18 +165,18 @@ class MainAct : AppCompatActivity() {
             }
         } else if (requestCode == RC_CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
             try {
-                val floatArray = data.getFloatArrayExtra("float_array")
-                val photoBytes = data.getByteArrayExtra("photo_bytes")
+                val scaledPhotoBytes = data.getByteArrayExtra("photo_bytes")
+                val scaledFloatArray = data.getFloatArrayExtra("float_array")
 
-                floatArray?.let {
-                    photoBytes?.let {
-                        val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+                scaledFloatArray?.let {
+                    scaledPhotoBytes?.let {
+                        val scaled = BitmapHelper.bytesToBitmap(scaledPhotoBytes)
                         // get bytes from compressed bitmap
                         val compressedPhotoBytes =
-                            BitmapHelper.compressedBitmapToByteArray(bitmap, 70)
+                            BitmapHelper.compressedBitmapToByteArray(scaled, 70)
                         // start polygon crop activity
                         startActivity(Intent(this@MainAct, PolyCropAct::class.java).apply {
-                            putExtra("float_array", floatArray)
+                            putExtra("float_array", scaledFloatArray)
                             putExtra("photo_bytes", compressedPhotoBytes)
                         })
                     }

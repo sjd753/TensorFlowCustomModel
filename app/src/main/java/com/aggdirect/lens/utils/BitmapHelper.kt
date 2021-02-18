@@ -133,7 +133,7 @@ object BitmapHelper {
         //        compositeImageView.setImageBitmap(resultingImage);
     }
 
-    fun drawBitmapByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
+    fun drawLinesByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
         if (array.isEmpty() || array.size != 8) throw IllegalArgumentException("float array must contain 8 elements")
 
         val resultingImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
@@ -141,11 +141,10 @@ object BitmapHelper {
         val canvas = Canvas(resultingImage)
         //
         val paint = Paint()
-        paint.strokeWidth = 3f
         paint.pathEffect = null
         paint.color = Color.RED
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = 16f
+        paint.strokeWidth = 8f
         paint.isAntiAlias = true
 
         // val path = Path()
@@ -181,6 +180,36 @@ object BitmapHelper {
 
 //        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
 //        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        return resultingImage
+    }
+
+    fun drawBitmapByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
+        if (array.isEmpty() || array.size != 8) throw IllegalArgumentException("float array must contain 8 elements")
+
+        val resultingImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
+        //
+        val canvas = Canvas(resultingImage)
+        //
+        val paint = Paint()
+        paint.strokeWidth = 1f
+        paint.pathEffect = null
+        paint.color = Color.RED
+        paint.style = Paint.Style.FILL
+        paint.isAntiAlias = true
+
+        val path = Path()
+        path.moveTo(array[0], array[1])
+        path.lineTo(array[0], array[1])
+        path.lineTo(array[2], array[3])
+        path.lineTo(array[6], array[7])
+        path.lineTo(array[4], array[5])
+        path.lineTo(array[0], array[1])
+
+        canvas.drawPath(path, paint)
+
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
         return resultingImage
     }
@@ -341,5 +370,28 @@ object BitmapHelper {
         } else {
             bitmap
         }
+    }
+
+    fun isDark(bitmap: Bitmap): Boolean {
+        var dark = false
+        val darkThreshold = bitmap.width * bitmap.height * 0.75f
+        var darkPixels = 0
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        for (pixel in pixels) {
+            // val color = pixels[i]
+            val r = Color.red(pixel)
+            val g = Color.green(pixel)
+            val b = Color.blue(pixel)
+            val luminance = 0.299 * r + 0.0f + 0.587 * g + 0.0f + 0.114 * b + 0.0f
+            if (luminance < 150) {
+                darkPixels++
+            }
+        }
+        if (darkPixels >= darkThreshold) {
+            dark = true
+        }
+        // val duration: Long = System.currentTimeMillis() - s
+        return dark
     }
 }

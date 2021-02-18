@@ -6,16 +6,28 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
+import com.aggdirect.lens.application.AppFileManager
+import com.aggdirect.lens.opencv.perspectiveTransform
 import com.aggdirect.lens.utils.BitmapHelper
 import kotlinx.android.synthetic.main.activity_poly_crop.*
+import org.opencv.android.OpenCVLoader
+import org.opencv.core.Point
 
 
 class PolyCropAct : AppCompatActivity() {
+    private lateinit var croppedBitmap: Bitmap
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_poly_crop)
+
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+            OpenCVLoader.initDebug()
+        }
 
         window.decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
@@ -26,9 +38,119 @@ class PolyCropAct : AppCompatActivity() {
             val floatArray = intent.getFloatArrayExtra("float_array")!!
             val photoBytes = intent.getByteArrayExtra("photo_bytes")!!
             frameLayout.post {
-                val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
+                // scaling not needed anymore as float array is generated on scaled bitmap
+                // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
-                setPoints(scaledFloatArray, photoBytes)
+                setPoints(floatArray, photoBytes)
+                // button click events
+                btnCancel.setOnClickListener {
+                    finish()
+                }
+                btnSaveOriginal.setOnClickListener {
+                    val file = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                btnSaveCropped.setOnClickListener {
+                    val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+                    val pointFs = polygonView.points
+                    val array = floatArrayOf(
+                        pointFs.getValue(0).x,
+                        pointFs.getValue(0).y,
+                        pointFs.getValue(1).x,
+                        pointFs.getValue(1).y,
+                        pointFs.getValue(2).x,
+                        pointFs.getValue(2).y,
+                        pointFs.getValue(3).x,
+                        pointFs.getValue(3).y,
+                    )
+                    croppedBitmap = BitmapHelper.drawBitmapByPoints(bitmap, array)
+                    val file = BitmapHelper.bitmapToFile(
+                        croppedBitmap,
+                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
+                    )
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    // set cropped bitmap and update buttons
+                    ivImage.setImageBitmap(croppedBitmap)
+                    polygonView.visibility = View.GONE
+                    btnSaveOriginal.visibility = View.GONE
+                    btnSaveCropped.visibility = View.GONE
+                    btnApplyPT.visibility = View.VISIBLE
+                    /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
+                        .setPositiveButton("Apply") { dialog, which ->
+                            val transformed = croppedBitmap.perspectiveTransform(
+                                listOf(
+                                    Point(
+                                        pointFs.getValue(0).x.toDouble(),
+                                        pointFs.getValue(0).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(1).x.toDouble(),
+                                        pointFs.getValue(1).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(2).x.toDouble(),
+                                        pointFs.getValue(2).y.toDouble()
+                                    ),
+                                    Point(
+                                        pointFs.getValue(3).x.toDouble(),
+                                        pointFs.getValue(3).y.toDouble()
+                                    )
+                                )
+                            )
+                            ivImage.setImageBitmap(transformed)
+                        }
+                        .setNegativeButton("Cancel") { dialog, which ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                    // EXPERIMENTAL CODE*/
+                }
+
+                btnApplyPT.setOnClickListener {
+                    val pointFs = polygonView.points
+                    val transformed = croppedBitmap.perspectiveTransform(
+                        listOf(
+                            Point(
+                                pointFs.getValue(0).x.toDouble(),
+                                pointFs.getValue(0).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(1).x.toDouble(),
+                                pointFs.getValue(1).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(2).x.toDouble(),
+                                pointFs.getValue(2).y.toDouble()
+                            ),
+                            Point(
+                                pointFs.getValue(3).x.toDouble(),
+                                pointFs.getValue(3).y.toDouble()
+                            )
+                        )
+                    )
+                    ivImage.setImageBitmap(transformed)
+                    btnApplyPT.visibility = View.GONE
+                    btnCancel.text = "Done"
+                    // save transformed bitmap as file
+                    val file = BitmapHelper.bitmapToFile(
+                        transformed,
+                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
+                    )
+                    Toast.makeText(
+                        this@PolyCropAct,
+                        "File saved at ${file.absolutePath}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
@@ -40,8 +162,8 @@ class PolyCropAct : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
-        Log.e("result", "display w: " + width)
-        Log.e("result", "display h: " + height)
+        Log.e("result", "display w: $width")
+        Log.e("result", "display h: $height")
 
         val projectedHeight = width * bitmap.height / bitmap.width
 

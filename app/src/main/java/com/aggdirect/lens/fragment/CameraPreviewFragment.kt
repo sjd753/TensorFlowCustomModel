@@ -6,10 +6,12 @@ import android.content.Intent
 import android.graphics.*
 import android.hardware.display.DisplayManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
@@ -35,6 +37,9 @@ class CameraPreviewFragment : Fragment() {
 
     companion object {
         private val TAG = CameraPreviewFragment::class.java.simpleName
+        private const val FLASH_MODE_OFF = -1
+        private const val FLASH_MODE_AUTO = 0
+        private const val FLASH_MODE_TORCH = 1
     }
 
     // private lateinit var app: App
@@ -46,6 +51,9 @@ class CameraPreviewFragment : Fragment() {
 
     private lateinit var floatArray: FloatArray
     private lateinit var rawBitmap: Bitmap
+    private lateinit var camera: Camera
+    private var flashMode = FLASH_MODE_OFF // -1 = off, 0 = auto, 1 = on
+    private var isTorchEnabled = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -66,32 +74,81 @@ class CameraPreviewFragment : Fragment() {
             Log.e(TAG, "setOnClickListener")
             if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::floatArray.isInitialized) {
                 try {
-                    // merged bitmap
-                    // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
-                    // get bytes from compressed bitmap
-                    val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
-
-                    activity.setResult(
-                        Activity.RESULT_OK,
-                        Intent()
-                            .putExtra("float_array", floatArray)
-                            .putExtra("photo_bytes", bytes)
-                    )
-                    activity.finish()
+                    if (flashMode == FLASH_MODE_AUTO) {
+                        // check darkness
+                        val isDark = BitmapHelper.isDark(rawBitmap)
+                        // Toast.makeText(activity, "Bitmap is dark: $isDark", Toast.LENGTH_LONG).show()
+                        if (isDark && !isTorchEnabled) {
+                            camera.cameraControl.enableTorch(true)
+                            isTorchEnabled = true
+                            view.btn_capture.postDelayed({
+                                view.btn_capture.performClick()
+                                camera.cameraControl.enableTorch(false)
+                                isTorchEnabled = false
+                            }, 1000)
+                        } else {
+                            // get bytes from compressed bitmap
+                            val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                            // ser results and finish
+                            activity.setResult(
+                                Activity.RESULT_OK,
+                                Intent()
+                                    .putExtra("float_array", floatArray)
+                                    .putExtra("photo_bytes", bytes)
+                            )
+                            activity.finish()
+                        }
+                    } else {
+                        // merged bitmap
+                        // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
+                        // get bytes from compressed bitmap
+                        val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                        // ser results and finish
+                        activity.setResult(
+                            Activity.RESULT_OK,
+                            Intent()
+                                .putExtra("float_array", floatArray)
+                                .putExtra("photo_bytes", bytes)
+                        )
+                        activity.finish()
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }
 
-        view.btnGallery.setOnClickListener {
-            val intent = Intent().apply {
-                action = Intent.ACTION_VIEW
-                type = "image/*"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        view.btnFlash.setOnClickListener {
+            if (::camera.isInitialized && camera.cameraInfo.hasFlashUnit()) {
+                // toggle flash modes
+                if (flashMode == FLASH_MODE_TORCH) flashMode = FLASH_MODE_OFF else flashMode++
+                var drawable = R.drawable.ic_flash_off
+                when (flashMode) {
+                    FLASH_MODE_OFF -> {
+                        camera.cameraControl.enableTorch(false)
+                        drawable = R.drawable.ic_flash_off
+                    }
+                    FLASH_MODE_AUTO -> {
+                        camera.cameraControl.enableTorch(false)
+                        drawable = R.drawable.ic_flash_auto
+                    }
+                    FLASH_MODE_TORCH -> {
+                        camera.cameraControl.enableTorch(true)
+                        drawable = R.drawable.ic_torch
+                    }
+                }
+                view.btnFlash.setImageResource(drawable)
             }
-            startActivity(intent)
         }
+
+//        view.btnGallery.setOnClickListener {
+//            val intent = Intent().apply {
+//                action = Intent.ACTION_VIEW
+//                type = "image/*"
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            }
+//            startActivity(intent)
+//        }
 
         return view
     }
@@ -185,7 +242,7 @@ class CameraPreviewFragment : Fragment() {
                 .setTargetRotation(Surface.ROTATION_0)
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, BoundingBoxAnalyzer { bitmap ->
+                    it.setAnalyzer(cameraExecutor, BoundingBoxAnalyzer(activity) { bitmap ->
                         Log.d(TAG, "BoundingBoxAnalyzer callback")
                         // process bitmap with correct orientation
                         processBitmap(bitmap)
@@ -200,7 +257,7 @@ class CameraPreviewFragment : Fragment() {
                 cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageAnalyzer
                 )
 
@@ -233,7 +290,7 @@ class CameraPreviewFragment : Fragment() {
         floatArray = detector.processTensor(activity, rawBitmap)
 
         // drawn line bitmap transparent background
-        val drawnLinesBitmap = BitmapHelper.drawBitmapByPoints(rawBitmap, floatArray)
+        val drawnLinesBitmap = BitmapHelper.drawLinesByPoints(rawBitmap, floatArray)
 
         // rawBitmap.recycle()
         // drawnLinesBitmap.recycle()
@@ -244,7 +301,10 @@ class CameraPreviewFragment : Fragment() {
         }
     }
 
-    private class BoundingBoxAnalyzer(private val listener: boundingBoxListener) :
+    private class BoundingBoxAnalyzer(
+        private val activity: AppCompatActivity,
+        private val listener: boundingBoxListener
+    ) :
         ImageAnalysis.Analyzer {
 
         private fun ByteBuffer.toByteArray(): ByteArray {
@@ -286,6 +346,19 @@ class CameraPreviewFragment : Fragment() {
             return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         }
 
+        private fun createScaledBitmap(bitmap: Bitmap): Bitmap {
+            // display metrics
+            val displayMetrics = DisplayMetrics()
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val height = displayMetrics.heightPixels
+            val width = displayMetrics.widthPixels
+
+            val projectedHeight = width * bitmap.height / bitmap.width
+            Log.e("result", "projectedHeight h: $projectedHeight")
+
+            return Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
+        }
+
         override fun analyze(image: ImageProxy) {
             Log.e(TAG, "analyze: image format: ${image.format}")
             when (image.format) {
@@ -299,8 +372,10 @@ class CameraPreviewFragment : Fragment() {
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
                         BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                    // scale bitmap according to screen resolution width
+                    val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener
-                    listener(rotatedBitmap)
+                    listener(scaled)
                 }
                 ImageFormat.YUV_420_888 -> {
                     Log.e(TAG, "analyze: image format: YUV_420_888")
@@ -312,8 +387,10 @@ class CameraPreviewFragment : Fragment() {
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
                         BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                    // scale bitmap according to screen resolution width
+                    val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener
-                    listener(rotatedBitmap)
+                    listener(scaled)
                 }
             }
             // close image proxy
