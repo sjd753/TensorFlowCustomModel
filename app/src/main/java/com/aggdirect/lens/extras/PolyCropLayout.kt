@@ -44,6 +44,7 @@ class PolyCropLayout : FrameLayout {
     private lateinit var midPointer24: TouchableAppCompatImageView
     private lateinit var polyCropLayout: PolyCropLayout
     private lateinit var magnifier: Magnifier
+    private val cropLayoutTouchListener = LayoutTouchListenerImpl()
 
     constructor(context: Context) : super(context) {
         init()
@@ -85,9 +86,12 @@ class PolyCropLayout : FrameLayout {
         addView(pointer4)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                magnifier = Magnifier.Builder(pointer4)
-                    .setCornerRadius(12.0f)
-                    .setDefaultSourceToMagnifierOffset(160, -160).build()
+                magnifier = Magnifier.Builder(polyCropLayout)
+                    .setCornerRadius(24.0f)
+                    .setElevation(16.0f)
+                    .setSize(300, 150)
+                    .setDefaultSourceToMagnifierOffset(0, -196)
+                    .build()
             }
         }
         initPaint()
@@ -221,6 +225,7 @@ class PolyCropLayout : FrameLayout {
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(v: View, event: MotionEvent): Boolean {
+            cropLayoutTouchListener.onTouch(polyCropLayout, event)
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> {
                     val mv = PointF(event.x - downPT.x, event.y - downPT.y)
@@ -278,6 +283,7 @@ class PolyCropLayout : FrameLayout {
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onTouch(v: View, event: MotionEvent): Boolean {
+            cropLayoutTouchListener.onTouch(polyCropLayout, event)
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> {
                     val mv = PointF(event.x - downPT.x, event.y - downPT.y)
@@ -286,6 +292,34 @@ class PolyCropLayout : FrameLayout {
                         v.y = (startPT.y + mv.y)
                         startPT = PointF(v.x, v.y)
                     }
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    downPT.x = event.x
+                    downPT.y = event.y
+                    startPT = PointF(v.x, v.y)
+                }
+                MotionEvent.ACTION_UP -> {
+                    val color = if (isValidShape(points)) {
+                        ContextCompat.getColor(context, android.R.color.white)
+                    } else {
+                        ContextCompat.getColor(context, android.R.color.holo_red_light)
+                    }
+                    paint.color = color
+                }
+                else -> {
+                }
+            }
+            polyCropLayout.invalidate()
+            return true
+        }
+    }
+
+    private inner class LayoutTouchListenerImpl : OnTouchListener {
+
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
                     if (::magnifier.isInitialized) {
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
@@ -303,28 +337,15 @@ class PolyCropLayout : FrameLayout {
                         }
                     }
                 }
-                MotionEvent.ACTION_DOWN -> {
-                    downPT.x = event.x
-                    downPT.y = event.y
-                    startPT = PointF(v.x, v.y)
-                }
                 MotionEvent.ACTION_UP -> {
-                    val color = if (isValidShape(points)) {
-                        ContextCompat.getColor(context, android.R.color.white)
-                    } else {
-                        ContextCompat.getColor(context, android.R.color.holo_red_light)
-                    }
-                    paint.color = color
                     if (::magnifier.isInitialized) {
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
                             magnifier.dismiss()
                         }
                     }
                 }
-                else -> {
-                }
             }
-            polyCropLayout.invalidate()
+            // polyCropLayout.invalidate()
             return true
         }
     }
