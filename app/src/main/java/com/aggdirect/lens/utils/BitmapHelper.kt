@@ -371,4 +371,27 @@ object BitmapHelper {
             bitmap
         }
     }
+
+    fun isDark(bitmap: Bitmap): Boolean {
+        var dark = false
+        val darkThreshold = bitmap.width * bitmap.height * 0.75f
+        var darkPixels = 0
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        for (pixel in pixels) {
+            // val color = pixels[i]
+            val r = Color.red(pixel)
+            val g = Color.green(pixel)
+            val b = Color.blue(pixel)
+            val luminance = 0.299 * r + 0.0f + 0.587 * g + 0.0f + 0.114 * b + 0.0f
+            if (luminance < 150) {
+                darkPixels++
+            }
+        }
+        if (darkPixels >= darkThreshold) {
+            dark = true
+        }
+        // val duration: Long = System.currentTimeMillis() - s
+        return dark
+    }
 }
