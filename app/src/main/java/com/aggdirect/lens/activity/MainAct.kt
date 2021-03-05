@@ -12,7 +12,6 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.aggdirect.lens.BuildConfig
 import com.aggdirect.lens.R
 import com.aggdirect.lens.application.App
 import com.aggdirect.lens.tensorflow.BoundingBoxDetector
@@ -47,7 +46,8 @@ class MainAct : AppCompatActivity() {
 
         detector = BoundingBoxDetector(assets)
 
-        val version = "version: ${BuildConfig.VERSION_NAME}"
+        // val version = "version: ${BuildConfig.VERSION_NAME}"
+        val version = "version 1.0"
         txtVersion.text = version
         cardGallery.setOnClickListener {
             choosePicture()
