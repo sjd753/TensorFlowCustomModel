@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'maven-publish'
@@ -8,7 +8,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.aggdirect.lens"
+
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 27
@@ -77,6 +77,12 @@ dependencies {
 // Because the components are created only during the afterEvaluate phase, you must
 // configure your publications using the afterEvaluate() lifecycle method.
 afterEvaluate {
+
+    task sourceJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier "sources"
+    }
+
     publishing {
         publications {
             // Creates a Maven publication called "release".
@@ -86,6 +92,8 @@ afterEvaluate {
                 groupId = 'com.aggdirect.lens'
                 artifactId = 'release-artifact'
                 version = '1.0'
+                artifact(sourceJar)
+                artifact("$buildDir/outputs/aar/app-release.aar")
             }
             // Creates a Maven publication called “debug”.
             debug(MavenPublication) {
@@ -93,6 +101,8 @@ afterEvaluate {
                 groupId = 'com.aggdirect.lens'
                 artifactId = 'debug-artifact'
                 version = '1.0'
+                artifact(sourceJar)
+                artifact("$buildDir/outputs/aar/app-debug.aar")
             }
         }
     }
