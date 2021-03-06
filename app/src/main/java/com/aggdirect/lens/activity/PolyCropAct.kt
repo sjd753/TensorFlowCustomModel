@@ -1,5 +1,6 @@
 package com.aggdirect.lens.activity
 
+import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -44,6 +45,7 @@ class PolyCropAct : AppCompatActivity() {
                 setPoints(floatArray, photoBytes)
                 // button click events
                 btnCancel.setOnClickListener {
+                    setResult(RESULT_CANCELED)
                     finish()
                 }
                 btnSaveOriginal.setOnClickListener {
@@ -55,7 +57,7 @@ class PolyCropAct : AppCompatActivity() {
                     ).show()
                 }
 
-                btnSaveCropped.setOnClickListener {
+                btnConfirm.setOnClickListener {
                     val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
                     val pointFs = polygonView.points
                     val array = floatArrayOf(
@@ -68,8 +70,8 @@ class PolyCropAct : AppCompatActivity() {
                         pointFs.getValue(3).x,
                         pointFs.getValue(3).y,
                     )
-                    croppedBitmap = BitmapHelper.drawBitmapByPoints(bitmap, array)
-                    val file = BitmapHelper.bitmapToFile(
+                    val croppedBitmap = BitmapHelper.drawBitmapByPoints(bitmap, array)
+                    /*val file = BitmapHelper.bitmapToFile(
                         croppedBitmap,
                         AppFileManager.makeAppDir(getString(R.string.app_name))!!
                     )
@@ -77,13 +79,15 @@ class PolyCropAct : AppCompatActivity() {
                         this@PolyCropAct,
                         "File saved at ${file.absolutePath}",
                         Toast.LENGTH_LONG
-                    ).show()
+                    ).show()*/
                     // set cropped bitmap and update buttons
-                    ivImage.setImageBitmap(croppedBitmap)
+                    // ivImage.setImageBitmap(croppedBitmap)
                     polygonView.visibility = View.GONE
                     btnSaveOriginal.visibility = View.GONE
-                    btnSaveCropped.visibility = View.GONE
-                    btnApplyPT.visibility = View.VISIBLE
+                    btnConfirm.visibility = View.GONE
+                    // btnApplyPT.visibility = View.VISIBLE
+                    // Apply transformation on cropped bitmap
+                    applyTransform(croppedBitmap, photoBytes)
                     /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
                         .setPositiveButton("Apply") { dialog, which ->
                             val transformed = croppedBitmap.perspectiveTransform(
@@ -113,43 +117,6 @@ class PolyCropAct : AppCompatActivity() {
                         }
                         .show()
                     // EXPERIMENTAL CODE*/
-                }
-
-                btnApplyPT.setOnClickListener {
-                    val pointFs = polygonView.points
-                    val transformed = croppedBitmap.perspectiveTransform(
-                        listOf(
-                            Point(
-                                pointFs.getValue(0).x.toDouble(),
-                                pointFs.getValue(0).y.toDouble()
-                            ),
-                            Point(
-                                pointFs.getValue(1).x.toDouble(),
-                                pointFs.getValue(1).y.toDouble()
-                            ),
-                            Point(
-                                pointFs.getValue(2).x.toDouble(),
-                                pointFs.getValue(2).y.toDouble()
-                            ),
-                            Point(
-                                pointFs.getValue(3).x.toDouble(),
-                                pointFs.getValue(3).y.toDouble()
-                            )
-                        )
-                    )
-                    ivImage.setImageBitmap(transformed)
-                    btnApplyPT.visibility = View.GONE
-                    btnCancel.text = "Done"
-                    // save transformed bitmap as file
-                    val file = BitmapHelper.bitmapToFile(
-                        transformed,
-                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
-                    )
-                    Toast.makeText(
-                        this@PolyCropAct,
-                        "File saved at ${file.absolutePath}",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
         }
@@ -235,6 +202,47 @@ class PolyCropAct : AppCompatActivity() {
             val marginLayoutParams = view.layoutParams as MarginLayoutParams
             marginLayoutParams.setMargins(left, top, right, bottom)
             view.requestLayout()
+        }
+    }
+
+    private fun applyTransform(croppedBitmap: Bitmap, photoBytes: ByteArray) {
+        val pointFs = polygonView.points
+        val transformed = croppedBitmap.perspectiveTransform(
+            listOf(
+                Point(
+                    pointFs.getValue(0).x.toDouble(),
+                    pointFs.getValue(0).y.toDouble()
+                ),
+                Point(
+                    pointFs.getValue(1).x.toDouble(),
+                    pointFs.getValue(1).y.toDouble()
+                ),
+                Point(
+                    pointFs.getValue(2).x.toDouble(),
+                    pointFs.getValue(2).y.toDouble()
+                ),
+                Point(
+                    pointFs.getValue(3).x.toDouble(),
+                    pointFs.getValue(3).y.toDouble()
+                )
+            )
+        )
+        ivImage.setImageBitmap(transformed)
+        btnApplyPT.visibility = View.GONE
+        btnCancel.text = "Done"
+        btnCancel.setOnClickListener {
+            // save original bitmap as file
+            val originalFile = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
+            // save transformed bitmap as file
+            val transformedFile = BitmapHelper.bitmapToFile(
+                transformed,
+                AppFileManager.makeAppDir(getString(R.string.app_name))!!
+            )
+            setResult(RESULT_OK, Intent().apply {
+                putExtra("original_path", originalFile.absolutePath)
+                putExtra("transformed_path", transformedFile.absolutePath)
+            })
+            finish()
         }
     }
 }

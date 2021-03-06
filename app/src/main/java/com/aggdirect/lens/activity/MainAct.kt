@@ -30,6 +30,7 @@ class MainAct : AppCompatActivity() {
         private val TAG: String = MainAct::class.java.simpleName
         private const val RC_CHOOSE_GALLERY = 1001
         private const val RC_CHOOSE_CAMERA = 1002
+        private const val RC_APPLY_TRANSFORM = 1003
     }
 
     private val permissionManager = PermissionManager.create(this)
@@ -175,15 +176,23 @@ class MainAct : AppCompatActivity() {
                         val compressedPhotoBytes =
                             BitmapHelper.compressedBitmapToByteArray(scaled, 70)
                         // start polygon crop activity
-                        startActivity(Intent(this@MainAct, PolyCropAct::class.java).apply {
+                        startActivityForResult(Intent(this@MainAct, PolyCropAct::class.java).apply {
                             putExtra("float_array", scaledFloatArray)
                             putExtra("photo_bytes", compressedPhotoBytes)
-                        })
+                        }, RC_APPLY_TRANSFORM)
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        } else if (requestCode == RC_APPLY_TRANSFORM && resultCode == Activity.RESULT_OK && data != null) {
+            val originalFilePath = data.getStringExtra("original_path")
+            val transformedFilePath = data.getStringExtra("transformed_path")
+            setResult(RESULT_OK, Intent().apply {
+                putExtra("original_path", originalFilePath)
+                putExtra("transformed_path", transformedFilePath)
+            })
+            finish()
         }
     }
 }

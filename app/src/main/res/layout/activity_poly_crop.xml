@@ -53,16 +53,16 @@
             android:padding="@dimen/margin_16"
             android:text="Save Original"
             android:textAllCaps="false"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSaveCropped"
+            android:id="@+id/btnConfirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
-            android:text="Save Cropped"
+            android:text="Confirm"
             android:textAllCaps="false"
             android:visibility="visible" />
 
