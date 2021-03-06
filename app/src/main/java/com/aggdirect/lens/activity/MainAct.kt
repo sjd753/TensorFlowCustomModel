@@ -48,7 +48,6 @@ class MainAct : AppCompatActivity() {
         detector = BoundingBoxDetector(assets)
 
         val version = "version: ${BuildConfig.VERSION_NAME}"
-        // val version = "version 1.0"
         txtVersion.text = version
         cardGallery.setOnClickListener {
             choosePicture()
