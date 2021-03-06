@@ -14,6 +14,9 @@ android {
         targetSdkVersion 29
         versionCode 27
         versionName "2.2.3"
+        // for library module VERSION_CODE and VERSION_NAME has to be set manually
+        buildConfigField 'int', 'VERSION_CODE', "27"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.2.3\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
