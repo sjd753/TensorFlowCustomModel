@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
@@ -68,7 +67,7 @@ class CameraPreviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_camera_preview, container, false)
+        val view = inflater.inflate(R.layout.lens_fragment_camera_preview, container, false)
 
         view.btn_capture.setOnClickListener {
             Log.e(TAG, "setOnClickListener")

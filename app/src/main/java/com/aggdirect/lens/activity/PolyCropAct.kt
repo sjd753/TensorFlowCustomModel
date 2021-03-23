@@ -23,7 +23,7 @@ class PolyCropAct : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_poly_crop)
+        setContentView(R.layout.lens_activity_poly_crop)
 
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error

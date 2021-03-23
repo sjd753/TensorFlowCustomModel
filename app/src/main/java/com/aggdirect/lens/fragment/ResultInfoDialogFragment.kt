@@ -29,7 +29,11 @@ class ResultInfoDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_result_info_dialog_list_dialog, container, false)
+        return inflater.inflate(
+            R.layout.lens_fragment_result_info_dialog_list_dialog,
+            container,
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,7 +48,7 @@ class ResultInfoDialogFragment : BottomSheetDialogFragment() {
         parent: ViewGroup
     ) : RecyclerView.ViewHolder(
         inflater.inflate(
-            R.layout.fragment_result_info_dialog_list_dialog_item,
+            R.layout.lens_fragment_result_info_dialog_list_dialog_item,
             parent,
             false
         )
