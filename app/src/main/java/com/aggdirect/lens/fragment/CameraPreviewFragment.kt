@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
@@ -18,7 +19,7 @@ import androidx.fragment.app.Fragment
 import com.aggdirect.lens.R
 import com.aggdirect.lens.tensorflow.BoundingBoxDetector
 import com.aggdirect.lens.utils.BitmapHelper
-import kotlinx.android.synthetic.main.fragment_camera_preview.view.*
+import kotlinx.android.synthetic.main.lens_fragment_camera_preview.view.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService

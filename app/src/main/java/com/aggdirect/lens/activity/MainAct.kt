@@ -20,7 +20,7 @@ import com.aggdirect.lens.utils.BitmapHelper
 import com.github.buchandersenn.android_permission_manager.PermissionManager
 import com.github.buchandersenn.android_permission_manager.PermissionRequest
 import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.lens_activity_main.*
 import java.io.FileNotFoundException
 
 

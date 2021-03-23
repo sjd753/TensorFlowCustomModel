@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aggdirect.lens.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_result_info_dialog_list_dialog.view.*
+import kotlinx.android.synthetic.main.lens_fragment_result_info_dialog_list_dialog.view.*
 
 // TODO: Customize parameter argument names
 const val ARG_ITEM_ARRAY = "item_array"

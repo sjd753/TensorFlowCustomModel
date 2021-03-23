@@ -13,7 +13,7 @@ import com.aggdirect.lens.R
 import com.aggdirect.lens.application.AppFileManager
 import com.aggdirect.lens.opencv.perspectiveTransform
 import com.aggdirect.lens.utils.BitmapHelper
-import kotlinx.android.synthetic.main.activity_poly_crop.*
+import kotlinx.android.synthetic.main.lens_activity_poly_crop.*
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Point
 
