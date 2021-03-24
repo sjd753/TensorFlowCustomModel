@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'maven-publish'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.sjd753'
 
@@ -12,8 +13,8 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 31
-        versionName "2.3.0"
+        versionCode 32
+        versionName "2.3.1"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
         buildConfigField 'int', 'VERSION_CODE', "27"
         buildConfigField 'String', 'VERSION_NAME', "\"2.2.3\""
@@ -50,30 +51,89 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // opencv
-    api project(path: ':sdk')
+    implementation project(path: ':sdk')
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     // tensorflow lite
-    api 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
     // This dependency adds the necessary TF op support.
-    api 'org.tensorflow:tensorflow-lite-select-tf-ops:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:0.0.0-nightly'
     // The GPU delegate library is optional. Depend on it as needed.
-    api 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
-    api 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     // google cameraX dependencies
     def camerax_version = "1.0.0-beta12"
     // CameraX core library using camera2 implementation
-    api "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
     // CameraX Lifecycle Library
-    api "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
-    api "androidx.camera:camera-view:1.0.0-alpha19"
+    implementation "androidx.camera:camera-view:1.0.0-alpha19"
     // exif interface
-    api 'androidx.exifinterface:exifinterface:1.3.1'
+    implementation 'androidx.exifinterface:exifinterface:1.3.1'
     // permission manager
-    api 'com.github.buchandersenn:android-permission-manager:1.0.0'
+    implementation 'com.github.buchandersenn:android-permission-manager:1.0.0'
     // glide
-    api 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.github.sjd753'
+            //You can either define these here or get them from project conf elsewhere
+            artifactId 'lens'
+            version '2.3.1'
+            artifact "$buildDir/outputs/aar/app-release.aar" //aar artifact you want to publish
+
+            //generate pom nodes for dependencies
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each { dependency ->
+                    if (dependency.name != 'unspecified') {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dependency.group)
+                        dependencyNode.appendNode('artifactId', dependency.name)
+                        dependencyNode.appendNode('version', dependency.version)
+                    }
+                }
+            }
+        }
+    }
+    //publish to filesystem repo
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
+task createPom  {
+    pom {
+        project {
+            groupId 'com.github.sjd753'
+            //You can either define these here or get them from project conf elsewhere
+            artifactId 'lens'
+            version '2.3.1'
+
+            inceptionYear '2021'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            dependencies {
+
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+task copyLibs(type: Copy) {
+    from configurations.api
+    into 'libs'
 }
