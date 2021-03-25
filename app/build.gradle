@@ -13,11 +13,11 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 35
-        versionName "2.3.4"
+        versionCode 36
+        versionName "2.3.5"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
-        buildConfigField 'int', 'VERSION_CODE', "35"
-        buildConfigField 'String', 'VERSION_NAME', "\"2.3.4\""
+        buildConfigField 'int', 'VERSION_CODE', "36"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.3.5\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
@@ -51,17 +51,17 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // opencv
-    implementation project(path: ':sdk')
+    api project(path: ':sdk')
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     // tensorflow lite
-    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    api 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
     // This dependency adds the necessary TF op support.
-    implementation 'org.tensorflow:tensorflow-lite-select-tf-ops:0.0.0-nightly'
+    api 'org.tensorflow:tensorflow-lite-select-tf-ops:0.0.0-nightly'
     // The GPU delegate library is optional. Depend on it as needed.
-    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+    api 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    api 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     // google cameraX dependencies
     def camerax_version = "1.0.0-beta12"
     // CameraX core library using camera2 implementation
@@ -85,7 +85,7 @@ publishing {
             groupId 'com.github.sjd753'
             //You can either define these here or get them from project conf elsewhere
             artifactId 'lens'
-            version '2.3.4'
+            version '2.3.5'
             artifact "$buildDir/outputs/aar/app-release.aar" //aar artifact you want to publish
 
             //generate pom nodes for dependencies
