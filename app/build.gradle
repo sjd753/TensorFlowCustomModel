@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'maven-publish'
-//apply plugin: 'com.github.dcendents.android-maven'
-//group = 'com.github.sjd753'
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.github.sjd753'
 
 android {
     compileSdkVersion 29
@@ -13,11 +13,11 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 40
-        versionName "2.3.9"
+        versionCode 41
+        versionName "2.4.0"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
-        buildConfigField 'int', 'VERSION_CODE', "40"
-        buildConfigField 'String', 'VERSION_NAME', "\"2.3.9\""
+        buildConfigField 'int', 'VERSION_CODE', "41"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.4.0\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
@@ -85,19 +85,19 @@ publishing {
             groupId 'com.github.sjd753'
             //You can either define these here or get them from project conf elsewhere
             artifactId 'lens'
-            version '2.3.9'
+            version '2.4.0'
             artifact "$buildDir/outputs/aar/app-release.aar" //aar artifact you want to publish
 
             //generate pom nodes for dependencies
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
                 configurations.implementation.allDependencies.each { dependency ->
-//                    if (dependency.name != 'unspecified') {
+                    if (dependency.name != 'unspecified') {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', dependency.group)
                         dependencyNode.appendNode('artifactId', dependency.name)
                         dependencyNode.appendNode('version', dependency.version)
-//                    }
+                    }
                 }
             }
         }
