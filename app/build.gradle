@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'maven-publish'
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.github.sjd753'
+//apply plugin: 'com.github.dcendents.android-maven'
+//group = 'com.github.sjd753'
 
 android {
     compileSdkVersion 29
@@ -13,11 +13,11 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 34
-        versionName "2.3.3"
+        versionCode 35
+        versionName "2.3.4"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
-        buildConfigField 'int', 'VERSION_CODE', "34"
-        buildConfigField 'String', 'VERSION_NAME', "\"2.3.3\""
+        buildConfigField 'int', 'VERSION_CODE', "35"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.3.4\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
@@ -85,7 +85,7 @@ publishing {
             groupId 'com.github.sjd753'
             //You can either define these here or get them from project conf elsewhere
             artifactId 'lens'
-            version '2.3.1'
+            version '2.3.4'
             artifact "$buildDir/outputs/aar/app-release.aar" //aar artifact you want to publish
 
             //generate pom nodes for dependencies
@@ -109,31 +109,28 @@ publishing {
         }
     }
 }
-
-task createPom  {
-    pom {
-        project {
-            groupId 'com.github.sjd753'
-            //You can either define these here or get them from project conf elsewhere
-            artifactId 'lens'
-            version '2.3.1'
-
-            inceptionYear '2021'
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-            dependencies {
-
-            }
-        }
-    }.writeTo("pom.xml")
-}
-
-task copyLibs(type: Copy) {
-    from configurations.api
-    into 'libs'
-}
+//
+//task createPom  {
+//    pom {
+//        project {
+//            groupId 'com.github.sjd753'
+//            //You can either define these here or get them from project conf elsewhere
+//            artifactId 'lens'
+//            version '2.3.1'
+//
+//            inceptionYear '2021'
+//            licenses {
+//                license {
+//                    name 'The Apache Software License, Version 2.0'
+//                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    distribution 'repo'
+//                }
+//            }
+//        }
+//    }.writeTo("pom.xml")
+//}
+//
+//task copyLibs(type: Copy) {
+//    from configurations.api
+//    into 'libs'
+//}
