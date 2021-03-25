@@ -13,11 +13,11 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 37
-        versionName "2.3.6"
+        versionCode 38
+        versionName "2.3.7"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
-        buildConfigField 'int', 'VERSION_CODE', "37"
-        buildConfigField 'String', 'VERSION_NAME', "\"2.3.6\""
+        buildConfigField 'int', 'VERSION_CODE', "38"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.3.7\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // opencv
-    api project(path: ':sdk')
+    implementation project(path: ':sdk')
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -85,7 +85,7 @@ publishing {
             groupId 'com.github.sjd753'
             //You can either define these here or get them from project conf elsewhere
             artifactId 'lens'
-            version '2.3.6'
+            version '2.3.7'
             artifact "$buildDir/outputs/aar/app-release.aar" //aar artifact you want to publish
 
             //generate pom nodes for dependencies
