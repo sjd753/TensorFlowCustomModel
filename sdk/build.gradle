@@ -147,6 +147,9 @@ android {
             path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
         }
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
