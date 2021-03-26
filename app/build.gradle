@@ -13,8 +13,8 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 47
-        versionName "2.4.6"
+        versionCode 48
+        versionName "2.4.7"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
         buildConfigField 'int', 'VERSION_CODE', "47"
         buildConfigField 'String', 'VERSION_NAME', "\"2.4.6\""
@@ -121,7 +121,7 @@ task createPom {
             groupId 'com.github.sjd753'
             //You can either define these here or get them from project conf elsewhere
             artifactId 'lens'
-            version '2.3.1'
+            version '2.4.7'
 
             inceptionYear '2021'
             licenses {
