@@ -13,11 +13,11 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 45
-        versionName "2.4.4"
+        versionCode 46
+        versionName "2.4.5"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
-        buildConfigField 'int', 'VERSION_CODE', "45"
-        buildConfigField 'String', 'VERSION_NAME', "\"2.4.4\""
+        buildConfigField 'int', 'VERSION_CODE', "46"
+        buildConfigField 'String', 'VERSION_NAME', "\"2.4.5\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // https://www.tensorflow.org/lite/guide/android#use_the_tensorflow_lite_aar_from_jcenter
@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // opencv
-    api project(path: ':sdk')
+    implementation project(path: ':sdk')
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
