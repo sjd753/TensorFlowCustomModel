@@ -10,12 +10,12 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
-import com.aggdirect.lens.application.AppFileManager
 import com.aggdirect.lens.opencv.perspectiveTransform
 import com.aggdirect.lens.utils.BitmapHelper
 import kotlinx.android.synthetic.main.lens_activity_poly_crop.*
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Point
+import java.io.ByteArrayOutputStream
 
 
 class PolyCropAct : AppCompatActivity() {
@@ -232,15 +232,19 @@ class PolyCropAct : AppCompatActivity() {
         btnCancel.text = "Done"
         btnCancel.setOnClickListener {
             // save original bitmap as file
-            val originalFile = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
+            // val originalFile = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
             // save transformed bitmap as file
-            val transformedFile = BitmapHelper.bitmapToFile(
-                transformed,
-                AppFileManager.makeAppDir(getString(R.string.app_name))!!
-            )
+            // val transformedFile = BitmapHelper.bitmapToFile(
+            //    transformed,
+            //    AppFileManager.makeAppDir(getString(R.string.app_name))!!
+            // )
+            val stream = ByteArrayOutputStream()
+            transformed.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val transformedBytes = stream.toByteArray()
+
             setResult(RESULT_OK, Intent().apply {
-                putExtra("original_path", originalFile.absolutePath)
-                putExtra("transformed_path", transformedFile.absolutePath)
+                putExtra("original_bytes", photoBytes)
+                putExtra("transformed_bytes", transformedBytes)
             })
             finish()
         }

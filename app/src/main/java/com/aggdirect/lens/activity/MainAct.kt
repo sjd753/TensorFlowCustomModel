@@ -186,11 +186,11 @@ class MainAct : AppCompatActivity() {
                 e.printStackTrace()
             }
         } else if (requestCode == RC_APPLY_TRANSFORM && resultCode == Activity.RESULT_OK && data != null) {
-            val originalFilePath = data.getStringExtra("original_path")
-            val transformedFilePath = data.getStringExtra("transformed_path")
+            val originalBytes = data.getByteArrayExtra("original_bytes")
+            val transformedBytes = data.getByteArrayExtra("transformed_bytes")
             setResult(RESULT_OK, Intent().apply {
-                putExtra("original_path", originalFilePath)
-                putExtra("transformed_path", transformedFilePath)
+                putExtra("original_bytes", originalBytes)
+                putExtra("transformed_bytes", transformedBytes)
             })
             finish()
         }
