@@ -69,6 +69,11 @@ class LensMainAct : AppCompatActivity() {
                 .show()
 
         }
+        // for lens module implementation open camera instantly
+        startActivityForResult(
+            Intent(this@LensMainAct, LensCameraAct::class.java),
+            RC_CHOOSE_CAMERA
+        )
     }
 
     override fun onStart() {
