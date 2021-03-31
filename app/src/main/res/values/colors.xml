@@ -8,4 +8,9 @@
     <color name="black_overlay_light">#22000000</color>
     <color name="black_overlay_dark">#aa000000</color>
     <color name="dark_grey">#1E1E1E</color>
+
+    <color name="white_overlay">#66FFFFFF</color>
+    <color name="white_overlay_light">#22FFFFFF</color>
+    <color name="white_overlay_dark">#aaFFFFFF</color>
+    <color name="light_grey">#D6D6D6</color>
 </resources>

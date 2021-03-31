@@ -41,6 +41,7 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
+            android:textColor="@android:color/white"
             android:text="Cancel"
             android:textAllCaps="false" />
 
@@ -49,6 +50,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@android:color/white"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
             android:text="Save Original"
@@ -60,6 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@android:color/white"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
             android:text="Confirm"
@@ -71,6 +74,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@android:color/white"
             android:backgroundTint="@color/colorAccent"
             android:text="Apply PT"
             android:visibility="gone" />

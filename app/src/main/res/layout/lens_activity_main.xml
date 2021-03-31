@@ -63,6 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Gallery"
+                    android:textColor="@color/light_grey"
                     android:textSize="24sp" />
 
             </LinearLayout>
@@ -99,6 +100,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Camera"
+                    android:textColor="@color/light_grey"
                     android:textSize="24sp" />
 
             </LinearLayout>

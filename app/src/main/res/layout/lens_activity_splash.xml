@@ -30,6 +30,7 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/margin_16"
             android:adjustViewBounds="true"
+            android:tint="@color/light_grey"
             android:src="@drawable/ic_camera" />
 
         <androidx.appcompat.widget.AppCompatTextView

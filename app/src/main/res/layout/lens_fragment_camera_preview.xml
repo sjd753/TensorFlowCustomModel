@@ -85,6 +85,7 @@
                 android:layout_gravity="center"
                 android:background="?selectableItemBackgroundBorderless"
                 android:layout_margin="@dimen/margin_8"
+                android:tint="@color/light_grey"
                 android:src="@drawable/ic_flash_off" />
 
         </FrameLayout>
@@ -105,6 +106,7 @@
             android:layout_gravity="center"
             android:background="@color/black_overlay_dark"
             android:padding="@dimen/margin_16"
+            android:textColor="@color/light_grey"
             android:text="Capture a document"
             android:textAllCaps="false" />
 
