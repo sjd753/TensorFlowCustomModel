@@ -203,6 +203,9 @@ class LensMainAct : AppCompatActivity() {
                 putExtra("transformed_bytes", transformedBytes)
             })
             finish()
+        } else {
+            // if result code do not match or result code not equals to RESULT_OK or data is null
+            finish()
         }
     }
 }
