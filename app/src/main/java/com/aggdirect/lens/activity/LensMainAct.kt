@@ -14,9 +14,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.BuildConfig
 import com.aggdirect.lens.R
-import com.aggdirect.lens.application.App
-import com.aggdirect.lens.tensorflow.BoundingBoxDetector
-import com.aggdirect.lens.utils.BitmapHelper
+import com.aggdirect.lens.application.LensApp
+import com.aggdirect.lens.tensorflow.LensBoundingBoxDetector
+import com.aggdirect.lens.utils.LensBitmapHelper
 import com.github.buchandersenn.android_permission_manager.PermissionManager
 import com.github.buchandersenn.android_permission_manager.PermissionRequest
 import com.github.buchandersenn.android_permission_manager.callbacks.OnPermissionCallback
@@ -24,10 +24,10 @@ import kotlinx.android.synthetic.main.lens_activity_main.*
 import java.io.FileNotFoundException
 
 
-class MainAct : AppCompatActivity() {
+class LensMainAct : AppCompatActivity() {
 
     companion object {
-        private val TAG: String = MainAct::class.java.simpleName
+        private val TAG: String = LensMainAct::class.java.simpleName
         private const val RC_CHOOSE_GALLERY = 1001
         private const val RC_CHOOSE_CAMERA = 1002
         private const val RC_APPLY_TRANSFORM = 1003
@@ -35,7 +35,7 @@ class MainAct : AppCompatActivity() {
 
     private val permissionManager = PermissionManager.create(this)
 
-    private lateinit var detector: BoundingBoxDetector
+    private lateinit var detector: LensBoundingBoxDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class MainAct : AppCompatActivity() {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
-        detector = BoundingBoxDetector(assets)
+        detector = LensBoundingBoxDetector(assets)
 
         val version = "version: ${BuildConfig.VERSION_NAME}"
         txtVersion.text = version
@@ -54,14 +54,14 @@ class MainAct : AppCompatActivity() {
             choosePicture()
         }
         cardCamera.setOnClickListener {
-            AlertDialog.Builder(this@MainAct)
+            AlertDialog.Builder(this@LensMainAct)
                 .setTitle("Note")
                 .setMessage("Focus camera on document and avoid movement. Please place the document on a dark background for better results")
                 .setPositiveButton(
                     "Proceed"
                 ) { _, _ ->
                     startActivityForResult(
-                        Intent(this@MainAct, CameraAct::class.java),
+                        Intent(this@LensMainAct, LensCameraAct::class.java),
                         RC_CHOOSE_CAMERA
                     )
                 }
@@ -90,7 +90,7 @@ class MainAct : AppCompatActivity() {
             .onCallback(object : OnPermissionCallback {
                 override fun onPermissionShowRationale(permissionRequest: PermissionRequest) {
                     Log.i(TAG, "storage permission show rationale")
-                    AlertDialog.Builder(this@MainAct).apply {
+                    AlertDialog.Builder(this@LensMainAct).apply {
                         setMessage("Storage permission is required")
                         setCancelable(false)
                         setPositiveButton("OK") { dialog, which ->
@@ -105,11 +105,11 @@ class MainAct : AppCompatActivity() {
 
                 override fun onPermissionDenied() {
                     Log.i(TAG, "storage permission denied")
-                    AlertDialog.Builder(this@MainAct).setTitle("Permission Denied")
+                    AlertDialog.Builder(this@LensMainAct).setTitle("Permission Denied")
                         .setMessage("Enable storage permission from settings app")
                         .setCancelable(false)
                         .setPositiveButton("Ok") { _, _ ->
-                            App.startInstalledAppDetailsActivity(this@MainAct)
+                            LensApp.startInstalledAppDetailsActivity(this@LensMainAct)
                         }
                         .setNegativeButton("CANCEL") { _, _ -> finish() }.show()
                 }
@@ -152,12 +152,12 @@ class MainAct : AppCompatActivity() {
                 Log.e("result", "projectedHeight h: $projectedHeight")
 
                 val scaled = Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
-                val floatArray = detector.processTensor(this@MainAct, scaled)
+                val floatArray = detector.processTensor(this@LensMainAct, scaled)
 
                 // get bytes from compressed bitmap
-                val compressedPhotoBytes = BitmapHelper.compressedBitmapToByteArray(scaled, 70)
+                val compressedPhotoBytes = LensBitmapHelper.compressedBitmapToByteArray(scaled, 70)
                 // start polygon crop activity
-                startActivity(Intent(this@MainAct, PolyCropAct::class.java).apply {
+                startActivity(Intent(this@LensMainAct, LensPolyCropAct::class.java).apply {
                     putExtra("float_array", floatArray)
                     putExtra("photo_bytes", compressedPhotoBytes)
                 })
@@ -171,15 +171,20 @@ class MainAct : AppCompatActivity() {
 
                 scaledFloatArray?.let {
                     scaledPhotoBytes?.let {
-                        val scaled = BitmapHelper.bytesToBitmap(scaledPhotoBytes)
+                        val scaled = LensBitmapHelper.bytesToBitmap(scaledPhotoBytes)
                         // get bytes from compressed bitmap
                         val compressedPhotoBytes =
-                            BitmapHelper.compressedBitmapToByteArray(scaled, 70)
+                            LensBitmapHelper.compressedBitmapToByteArray(scaled, 70)
                         // start polygon crop activity
-                        startActivityForResult(Intent(this@MainAct, PolyCropAct::class.java).apply {
-                            putExtra("float_array", scaledFloatArray)
-                            putExtra("photo_bytes", compressedPhotoBytes)
-                        }, RC_APPLY_TRANSFORM)
+                        startActivityForResult(
+                            Intent(
+                                this@LensMainAct,
+                                LensPolyCropAct::class.java
+                            ).apply {
+                                putExtra("float_array", scaledFloatArray)
+                                putExtra("photo_bytes", compressedPhotoBytes)
+                            }, RC_APPLY_TRANSFORM
+                        )
                     }
                 }
             } catch (e: Exception) {

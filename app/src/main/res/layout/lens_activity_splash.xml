@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/dark_grey"
-    tools:context=".activity.SplashAct">
+    tools:context=".activity.LensSplashAct">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="match_parent"

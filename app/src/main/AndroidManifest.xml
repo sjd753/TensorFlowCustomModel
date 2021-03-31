@@ -30,7 +30,7 @@
         </provider>
 
         <activity
-            android:name=".activity.SplashAct"
+            android:name=".activity.LensSplashAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -39,11 +39,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MainAct"
+            android:name=".activity.LensMainAct"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.CameraAct"
+            android:name=".activity.LensCameraAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -53,7 +53,7 @@
             <!-- </intent-filter> -->
         </activity>
         <activity
-            android:name=".activity.PolyCropAct"
+            android:name=".activity.LensPolyCropAct"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

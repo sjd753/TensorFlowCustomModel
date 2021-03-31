@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.fragment.CameraPreviewFragment
 
-class CameraAct : AppCompatActivity() {
+class LensCameraAct : AppCompatActivity() {
 
     companion object {
         internal const val RC_CAPTURE = 111

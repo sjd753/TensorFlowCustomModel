@@ -9,10 +9,10 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 
-class SplashAct : AppCompatActivity() {
+class LensSplashAct : AppCompatActivity() {
 
     companion object {
-        private val TAG: String = SplashAct::class.java.simpleName
+        private val TAG: String = LensSplashAct::class.java.simpleName
         private const val splashTimeout: Long = 500
     }
 
@@ -27,7 +27,7 @@ class SplashAct : AppCompatActivity() {
         window.statusBarColor = Color.TRANSPARENT
 
         Handler().postDelayed({
-            val intent = Intent(this@SplashAct, MainAct::class.java)
+            val intent = Intent(this@LensSplashAct, LensMainAct::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }, splashTimeout)

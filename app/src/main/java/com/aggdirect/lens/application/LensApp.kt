@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 
-class App : Application() {
+class LensApp : Application() {
 
     companion object {
         fun startInstalledAppDetailsActivity(context: Activity) {

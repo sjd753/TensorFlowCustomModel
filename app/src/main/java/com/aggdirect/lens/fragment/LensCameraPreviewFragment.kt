@@ -17,8 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import com.aggdirect.lens.R
-import com.aggdirect.lens.tensorflow.BoundingBoxDetector
-import com.aggdirect.lens.utils.BitmapHelper
+import com.aggdirect.lens.tensorflow.LensBoundingBoxDetector
+import com.aggdirect.lens.utils.LensBitmapHelper
 import kotlinx.android.synthetic.main.lens_fragment_camera_preview.view.*
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -44,7 +44,7 @@ class CameraPreviewFragment : Fragment() {
 
     // private lateinit var app: App
     private lateinit var activity: AppCompatActivity
-    private lateinit var detector: BoundingBoxDetector
+    private lateinit var detector: LensBoundingBoxDetector
     private lateinit var rootView: View
 
     private lateinit var cameraExecutor: ExecutorService
@@ -59,7 +59,7 @@ class CameraPreviewFragment : Fragment() {
         super.onAttach(context)
         if (context is AppCompatActivity) {
             activity = context
-            detector = BoundingBoxDetector(activity.assets)
+            detector = LensBoundingBoxDetector(activity.assets)
         }
     }
 
@@ -76,7 +76,7 @@ class CameraPreviewFragment : Fragment() {
                 try {
                     if (flashMode == FLASH_MODE_AUTO) {
                         // check darkness
-                        val isDark = BitmapHelper.isDark(rawBitmap)
+                        val isDark = LensBitmapHelper.isDark(rawBitmap)
                         // Toast.makeText(activity, "Bitmap is dark: $isDark", Toast.LENGTH_LONG).show()
                         if (isDark && !isTorchEnabled) {
                             camera.cameraControl.enableTorch(true)
@@ -88,7 +88,7 @@ class CameraPreviewFragment : Fragment() {
                             }, 1000)
                         } else {
                             // get bytes from compressed bitmap
-                            val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                            val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
                             // ser results and finish
                             activity.setResult(
                                 Activity.RESULT_OK,
@@ -102,7 +102,7 @@ class CameraPreviewFragment : Fragment() {
                         // merged bitmap
                         // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
                         // get bytes from compressed bitmap
-                        val bytes = BitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                        val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
                         // ser results and finish
                         activity.setResult(
                             Activity.RESULT_OK,
@@ -290,7 +290,7 @@ class CameraPreviewFragment : Fragment() {
         floatArray = detector.processTensor(activity, rawBitmap)
 
         // drawn line bitmap transparent background
-        val drawnLinesBitmap = BitmapHelper.drawLinesByPoints(rawBitmap, floatArray)
+        val drawnLinesBitmap = LensBitmapHelper.drawLinesByPoints(rawBitmap, floatArray)
 
         // rawBitmap.recycle()
         // drawnLinesBitmap.recycle()
@@ -371,7 +371,7 @@ class CameraPreviewFragment : Fragment() {
                     // find orientation and rotate if required
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
-                        BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                        LensBitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
                     // scale bitmap according to screen resolution width
                     val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener
@@ -386,7 +386,7 @@ class CameraPreviewFragment : Fragment() {
                     // find orientation and rotate if required
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
-                        BitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
+                        LensBitmapHelper.rotateBitmap(bitmap, rotation.toFloat())
                     // scale bitmap according to screen resolution width
                     val scaled = createScaledBitmap(rotatedBitmap)
                     // invoke listener

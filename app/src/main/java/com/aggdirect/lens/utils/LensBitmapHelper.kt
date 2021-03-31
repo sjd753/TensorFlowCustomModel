@@ -12,7 +12,7 @@ import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import com.aggdirect.lens.R
-import com.aggdirect.lens.application.AppFileManager
+import com.aggdirect.lens.application.LensAppFileManager
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,9 +22,9 @@ import java.util.*
  * Created by Sajjad Mistri on 24-01-2017.
  */
 
-object BitmapHelper {
+object LensBitmapHelper {
 
-    private val TAG = BitmapHelper::class.java.simpleName
+    private val TAG = LensBitmapHelper::class.java.simpleName
 
     @Synchronized
     @Throws(IOException::class)
@@ -58,7 +58,7 @@ object BitmapHelper {
         try {
             val photoFile = bitmapToFile(
                 bitmap,
-                AppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
+                LensAppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
                 formatPNG
             )
             val uri: Uri?
@@ -93,7 +93,7 @@ object BitmapHelper {
         val bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         return bitmapToFile(
             bitmap,
-            AppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
+            LensAppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
             formatPNG
         )
     }
@@ -247,7 +247,7 @@ object BitmapHelper {
             os.flush()
             os.close()
         } catch (e: Exception) {
-            Log.e(BitmapHelper::class.java.simpleName, "Error writing bitmap", e)
+            Log.e(LensBitmapHelper::class.java.simpleName, "Error writing bitmap", e)
         }
 
         return imageFile
@@ -263,7 +263,7 @@ object BitmapHelper {
             return array
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e(BitmapHelper::class.java.simpleName, "Error compressing bitmap", e)
+            Log.e(LensBitmapHelper::class.java.simpleName, "Error compressing bitmap", e)
         }
 
         return ByteArray(0)
@@ -280,7 +280,7 @@ object BitmapHelper {
         } catch (e: IOException) {
             e.printStackTrace()
             orientation = -1
-            Log.e(BitmapHelper::class.java.simpleName, "Photo does not exists", e)
+            Log.e(LensBitmapHelper::class.java.simpleName, "Photo does not exists", e)
         }
 
         return orientation
@@ -308,7 +308,7 @@ object BitmapHelper {
             return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e(BitmapHelper::class.java.simpleName, "OOM..please try with smaller image", e)
+            Log.e(LensBitmapHelper::class.java.simpleName, "OOM..please try with smaller image", e)
         }
 
         return source

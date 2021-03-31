@@ -23,7 +23,7 @@ import kotlin.math.abs
 /**
  * Created by Sajjad on 23/11/20.
  */
-class PolyCropLayout : FrameLayout {
+class LensPolyCropLayout : FrameLayout {
 
     private inner class TouchableAppCompatImageView(context: Context) :
         AppCompatImageView(context) {
@@ -42,7 +42,7 @@ class PolyCropLayout : FrameLayout {
     private lateinit var midPointer12: TouchableAppCompatImageView
     private lateinit var midPointer34: TouchableAppCompatImageView
     private lateinit var midPointer24: TouchableAppCompatImageView
-    private lateinit var polyCropLayout: PolyCropLayout
+    private lateinit var polyCropLayout: LensPolyCropLayout
     private lateinit var magnifier: Magnifier
     private val cropLayoutTouchListener = LayoutTouchListenerImpl()
 

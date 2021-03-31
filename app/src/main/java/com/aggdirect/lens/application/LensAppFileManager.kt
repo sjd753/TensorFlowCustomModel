@@ -12,7 +12,7 @@ import java.util.*
  * Created by Sajjad Mistri on 3/7/2018.
  */
 
-object AppFileManager {
+object LensAppFileManager {
 
     @Synchronized
     fun makeAppDir(appName: String): File? {

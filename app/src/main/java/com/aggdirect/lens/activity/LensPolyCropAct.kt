@@ -11,14 +11,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.aggdirect.lens.R
 import com.aggdirect.lens.opencv.perspectiveTransform
-import com.aggdirect.lens.utils.BitmapHelper
+import com.aggdirect.lens.utils.LensBitmapHelper
 import kotlinx.android.synthetic.main.lens_activity_poly_crop.*
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Point
 import java.io.ByteArrayOutputStream
 
 
-class PolyCropAct : AppCompatActivity() {
+class LensPolyCropAct : AppCompatActivity() {
     private lateinit var croppedBitmap: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,16 +49,16 @@ class PolyCropAct : AppCompatActivity() {
                     finish()
                 }
                 btnSaveOriginal.setOnClickListener {
-                    val file = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
+                    val file = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
                     Toast.makeText(
-                        this@PolyCropAct,
+                        this@LensPolyCropAct,
                         "File saved at ${file.absolutePath}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
 
                 btnConfirm.setOnClickListener {
-                    val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+                    val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
                     val pointFs = polygonView.points
                     val array = floatArrayOf(
                         pointFs.getValue(0).x,
@@ -70,7 +70,7 @@ class PolyCropAct : AppCompatActivity() {
                         pointFs.getValue(3).x,
                         pointFs.getValue(3).y,
                     )
-                    val croppedBitmap = BitmapHelper.drawBitmapByPoints(bitmap, array)
+                    val croppedBitmap = LensBitmapHelper.drawBitmapByPoints(bitmap, array)
                     /*val file = BitmapHelper.bitmapToFile(
                         croppedBitmap,
                         AppFileManager.makeAppDir(getString(R.string.app_name))!!
@@ -124,7 +124,7 @@ class PolyCropAct : AppCompatActivity() {
 
     private fun getScaledPoints(floatArray: FloatArray, photoBytes: ByteArray): FloatArray {
         // ##EXPERIMENTAL CODE
-        val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+        val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
@@ -147,7 +147,7 @@ class PolyCropAct : AppCompatActivity() {
     }
 
     private fun setPoints(scaledFloatArray: FloatArray, photoBytes: ByteArray) {
-        val bitmap = BitmapHelper.bytesToBitmap(photoBytes)
+        val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
         ivImage.setImageBitmap(bitmap)
         if (scaledFloatArray.isEmpty() || scaledFloatArray.size != 8) throw IllegalArgumentException(
             "float array must contain 8 elements"
