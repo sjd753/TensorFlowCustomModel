@@ -173,7 +173,7 @@ class LensMainAct : AppCompatActivity() {
             try {
                 val scaledPhotoBytes = data.getByteArrayExtra("photo_bytes")
                 val scaledFloatArray = data.getFloatArrayExtra("float_array")
-
+                Log.e(TAG, "float_array: $scaledFloatArray")
                 scaledFloatArray?.let {
                     scaledPhotoBytes?.let {
                         val scaled = LensBitmapHelper.bytesToBitmap(scaledPhotoBytes)
@@ -198,9 +198,15 @@ class LensMainAct : AppCompatActivity() {
         } else if (requestCode == RC_APPLY_TRANSFORM && resultCode == Activity.RESULT_OK && data != null) {
             val originalBytes = data.getByteArrayExtra("original_bytes")
             val transformedBytes = data.getByteArrayExtra("transformed_bytes")
+            val originalCoordinates = data.getFloatArrayExtra("original_coordinates")
+            val adjustedCoordinates = data.getFloatArrayExtra("adjusted_coordinates")
+            Log.e(TAG, "original_coordinates: $originalCoordinates")
+            Log.e(TAG, "adjusted_coordinates: $adjustedCoordinates")
             setResult(RESULT_OK, Intent().apply {
                 putExtra("original_bytes", originalBytes)
                 putExtra("transformed_bytes", transformedBytes)
+                putExtra("original_coordinates", originalCoordinates)
+                putExtra("adjusted_coordinates", adjustedCoordinates)
             })
             finish()
         } else {

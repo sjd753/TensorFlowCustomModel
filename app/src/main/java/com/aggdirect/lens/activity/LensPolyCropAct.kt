@@ -87,7 +87,12 @@ class LensPolyCropAct : AppCompatActivity() {
                     btnConfirm.visibility = View.GONE
                     // btnApplyPT.visibility = View.VISIBLE
                     // Apply transformation on cropped bitmap
-                    applyTransform(croppedBitmap, photoBytes)
+                    applyTransform(
+                        croppedBitmap,
+                        photoBytes,
+                        originalCoordinates = floatArray,
+                        adjustedCoordinates = array
+                    )
                     /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
                         .setPositiveButton("Apply") { dialog, which ->
                             val transformed = croppedBitmap.perspectiveTransform(
@@ -205,7 +210,12 @@ class LensPolyCropAct : AppCompatActivity() {
         }
     }
 
-    private fun applyTransform(croppedBitmap: Bitmap, photoBytes: ByteArray) {
+    private fun applyTransform(
+        croppedBitmap: Bitmap,
+        photoBytes: ByteArray,
+        originalCoordinates: FloatArray,
+        adjustedCoordinates: FloatArray
+    ) {
         val pointFs = polygonView.points
         val transformed = croppedBitmap.perspectiveTransform(
             listOf(
@@ -245,6 +255,8 @@ class LensPolyCropAct : AppCompatActivity() {
             setResult(RESULT_OK, Intent().apply {
                 putExtra("original_bytes", photoBytes)
                 putExtra("transformed_bytes", transformedBytes)
+                putExtra("original_coordinates", originalCoordinates)
+                putExtra("adjusted_coordinates", adjustedCoordinates)
             })
             finish()
         }
