@@ -12,16 +12,16 @@
             <name>The Apache Software License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
-    </license>
-  </licenses>
-  <dependencies>
-    <dependency>
-      <groupId>androidx.camera</groupId>
-      <artifactId>camera-camera2</artifactId>
-      <version>1.0.0-beta12</version>
-    </dependency>
-    <dependency>
-      <groupId>androidx.camera</groupId>
+        </license>
+    </licenses>
+    <dependencies>
+        <dependency>
+            <groupId>androidx.camera</groupId>
+            <artifactId>camera-camera2</artifactId>
+            <version>1.0.0-beta12</version>
+        </dependency>
+        <dependency>
+            <groupId>androidx.camera</groupId>
       <artifactId>camera-lifecycle</artifactId>
       <version>1.0.0-beta12</version>
     </dependency>

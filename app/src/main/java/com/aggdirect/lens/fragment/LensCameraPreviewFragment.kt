@@ -72,6 +72,7 @@ class CameraPreviewFragment : Fragment() {
 
         view.btn_capture.setOnClickListener {
             Log.e(TAG, "setOnClickListener")
+            var captureStartTime = System.currentTimeMillis()
             if (::rawBitmap.isInitialized && !rawBitmap.isRecycled && ::floatArray.isInitialized) {
                 try {
                     if (flashMode == FLASH_MODE_AUTO) {
@@ -83,18 +84,22 @@ class CameraPreviewFragment : Fragment() {
                             isTorchEnabled = true
                             view.btn_capture.postDelayed({
                                 view.btn_capture.performClick()
+                                captureStartTime = System.currentTimeMillis()
                                 camera.cameraControl.enableTorch(false)
                                 isTorchEnabled = false
                             }, 1000)
                         } else {
                             // get bytes from compressed bitmap
                             val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                            // get duration
+                            val duration = System.currentTimeMillis() - captureStartTime
                             // ser results and finish
                             activity.setResult(
                                 Activity.RESULT_OK,
                                 Intent()
                                     .putExtra("float_array", floatArray)
                                     .putExtra("photo_bytes", bytes)
+                                    .putExtra("capture_duration", duration)
                             )
                             activity.finish()
                         }
@@ -103,12 +108,15 @@ class CameraPreviewFragment : Fragment() {
                         // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
                         // get bytes from compressed bitmap
                         val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                        // get duration
+                        val captureDuration = System.currentTimeMillis() - captureStartTime
                         // ser results and finish
                         activity.setResult(
                             Activity.RESULT_OK,
                             Intent()
                                 .putExtra("float_array", floatArray)
                                 .putExtra("photo_bytes", bytes)
+                                .putExtra("capture_duration", captureDuration)
                         )
                         activity.finish()
                     }

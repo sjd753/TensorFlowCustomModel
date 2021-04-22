@@ -38,6 +38,7 @@ class LensPolyCropAct : AppCompatActivity() {
         if (intent.hasExtra("float_array") && intent.hasExtra("photo_bytes")) {
             val floatArray = intent.getFloatArrayExtra("float_array")!!
             val photoBytes = intent.getByteArrayExtra("photo_bytes")!!
+            val captureDuration = intent.getLongExtra("capture_duration", 0L)
             frameLayout.post {
                 // scaling not needed anymore as float array is generated on scaled bitmap
                 // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
@@ -91,7 +92,8 @@ class LensPolyCropAct : AppCompatActivity() {
                         croppedBitmap,
                         photoBytes,
                         originalCoordinates = floatArray,
-                        adjustedCoordinates = array
+                        adjustedCoordinates = array,
+                        captureDuration = captureDuration
                     )
                     /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
                         .setPositiveButton("Apply") { dialog, which ->
@@ -214,8 +216,10 @@ class LensPolyCropAct : AppCompatActivity() {
         croppedBitmap: Bitmap,
         photoBytes: ByteArray,
         originalCoordinates: FloatArray,
-        adjustedCoordinates: FloatArray
+        adjustedCoordinates: FloatArray,
+        captureDuration: Long
     ) {
+        val transformStartTime = System.currentTimeMillis()
         val pointFs = polygonView.points
         val transformed = croppedBitmap.perspectiveTransform(
             listOf(
@@ -237,6 +241,7 @@ class LensPolyCropAct : AppCompatActivity() {
                 )
             )
         )
+        val transformedDuration = System.currentTimeMillis() - transformStartTime
         ivImage.setImageBitmap(transformed)
         btnApplyPT.visibility = View.GONE
         btnCancel.text = "Done"
@@ -257,6 +262,8 @@ class LensPolyCropAct : AppCompatActivity() {
                 putExtra("transformed_bytes", transformedBytes)
                 putExtra("original_coordinates", originalCoordinates)
                 putExtra("adjusted_coordinates", adjustedCoordinates)
+                putExtra("capture_duration", captureDuration)
+                putExtra("transform_duration", transformedDuration)
             })
             finish()
         }

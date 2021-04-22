@@ -173,6 +173,7 @@ class LensMainAct : AppCompatActivity() {
             try {
                 val scaledPhotoBytes = data.getByteArrayExtra("photo_bytes")
                 val scaledFloatArray = data.getFloatArrayExtra("float_array")
+                val captureDuration = data.getLongExtra("capture_duration", 0L)
                 Log.e(TAG, "float_array: ${scaledFloatArray?.toString()}")
                 scaledFloatArray?.forEach {
                     Log.e(TAG, "float_array: $it")
@@ -191,6 +192,7 @@ class LensMainAct : AppCompatActivity() {
                             ).apply {
                                 putExtra("float_array", scaledFloatArray)
                                 putExtra("photo_bytes", compressedPhotoBytes)
+                                putExtra("capture_duration", captureDuration)
                             }, RC_APPLY_TRANSFORM
                         )
                     }
@@ -203,6 +205,8 @@ class LensMainAct : AppCompatActivity() {
             val transformedBytes = data.getByteArrayExtra("transformed_bytes")
             val originalCoordinates = data.getFloatArrayExtra("original_coordinates")
             val adjustedCoordinates = data.getFloatArrayExtra("adjusted_coordinates")
+            val captureDuration = data.getLongExtra("capture_duration", 0L)
+            val transformedDuration = data.getLongExtra("transform_duration", 0L)
             originalCoordinates?.forEach {
                 Log.e(TAG, "original_coordinates: $it")
             }
@@ -214,6 +218,8 @@ class LensMainAct : AppCompatActivity() {
                 putExtra("transformed_bytes", transformedBytes)
                 putExtra("original_coordinates", originalCoordinates)
                 putExtra("adjusted_coordinates", adjustedCoordinates)
+                putExtra("capture_duration", captureDuration)
+                putExtra("transform_duration", transformedDuration)
             })
             finish()
         } else {
