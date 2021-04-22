@@ -44,6 +44,17 @@ class LensPolyCropAct : AppCompatActivity() {
                 // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
                 setPoints(floatArray, photoBytes)
+                val pointFs = polygonView.points
+                val originalCoordinates = floatArrayOf(
+                    pointFs.getValue(0).x,
+                    pointFs.getValue(0).y,
+                    pointFs.getValue(1).x,
+                    pointFs.getValue(1).y,
+                    pointFs.getValue(2).x,
+                    pointFs.getValue(2).y,
+                    pointFs.getValue(3).x,
+                    pointFs.getValue(3).y,
+                )
                 // button click events
                 btnCancel.setOnClickListener {
                     setResult(RESULT_CANCELED)
@@ -61,7 +72,7 @@ class LensPolyCropAct : AppCompatActivity() {
                 btnConfirm.setOnClickListener {
                     val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
                     val pointFs = polygonView.points
-                    val array = floatArrayOf(
+                    val adjustedCoordinates = floatArrayOf(
                         pointFs.getValue(0).x,
                         pointFs.getValue(0).y,
                         pointFs.getValue(1).x,
@@ -71,7 +82,8 @@ class LensPolyCropAct : AppCompatActivity() {
                         pointFs.getValue(3).x,
                         pointFs.getValue(3).y,
                     )
-                    val croppedBitmap = LensBitmapHelper.drawBitmapByPoints(bitmap, array)
+                    val croppedBitmap =
+                        LensBitmapHelper.drawBitmapByPoints(bitmap, adjustedCoordinates)
                     /*val file = BitmapHelper.bitmapToFile(
                         croppedBitmap,
                         AppFileManager.makeAppDir(getString(R.string.app_name))!!
@@ -91,8 +103,8 @@ class LensPolyCropAct : AppCompatActivity() {
                     applyTransform(
                         croppedBitmap,
                         photoBytes,
-                        originalCoordinates = floatArray,
-                        adjustedCoordinates = array,
+                        originalCoordinates = originalCoordinates,
+                        adjustedCoordinates = adjustedCoordinates,
                         captureDuration = captureDuration
                     )
                     /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
