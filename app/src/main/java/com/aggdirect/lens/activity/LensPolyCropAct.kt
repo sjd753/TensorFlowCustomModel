@@ -44,17 +44,17 @@ class LensPolyCropAct : AppCompatActivity() {
                 // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
                 setPoints(floatArray, photoBytes)
-                val pointFs = polygonView.points
-                val originalCoordinates = floatArrayOf(
-                    pointFs.getValue(0).x,
-                    pointFs.getValue(0).y,
-                    pointFs.getValue(1).x,
-                    pointFs.getValue(1).y,
-                    pointFs.getValue(2).x,
-                    pointFs.getValue(2).y,
-                    pointFs.getValue(3).x,
-                    pointFs.getValue(3).y,
-                )
+//                val pointFs = polygonView.points
+//                val originalCoordinates = floatArrayOf(
+//                    pointFs.getValue(0).x,
+//                    pointFs.getValue(0).y,
+//                    pointFs.getValue(1).x,
+//                    pointFs.getValue(1).y,
+//                    pointFs.getValue(2).x,
+//                    pointFs.getValue(2).y,
+//                    pointFs.getValue(3).x,
+//                    pointFs.getValue(3).y,
+//                )
                 // button click events
                 btnCancel.setOnClickListener {
                     setResult(RESULT_CANCELED)
@@ -103,7 +103,7 @@ class LensPolyCropAct : AppCompatActivity() {
                     applyTransform(
                         croppedBitmap,
                         photoBytes,
-                        originalCoordinates = originalCoordinates,
+                        originalCoordinates = floatArray,
                         adjustedCoordinates = adjustedCoordinates,
                         captureDuration = captureDuration
                     )
