@@ -22,16 +22,16 @@
         </dependency>
         <dependency>
             <groupId>androidx.camera</groupId>
-      <artifactId>camera-lifecycle</artifactId>
-      <version>1.0.0-beta12</version>
-    </dependency>
-    <dependency>
-      <groupId>androidx.camera</groupId>
-      <artifactId>camera-view</artifactId>
-      <version>1.0.0-alpha19</version>
-    </dependency>
-    <dependency>
-      <groupId>androidx.exifinterface</groupId>
+            <artifactId>camera-lifecycle</artifactId>
+            <version>1.0.0-beta12</version>
+        </dependency>
+        <dependency>
+            <groupId>androidx.camera</groupId>
+            <artifactId>camera-view</artifactId>
+            <version>1.0.0-alpha19</version>
+        </dependency>
+        <dependency>
+            <groupId>androidx.exifinterface</groupId>
       <artifactId>exifinterface</artifactId>
       <version>1.3.1</version>
     </dependency>
