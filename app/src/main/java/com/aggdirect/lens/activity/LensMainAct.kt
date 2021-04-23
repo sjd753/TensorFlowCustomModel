@@ -207,12 +207,12 @@ class LensMainAct : AppCompatActivity() {
             val adjustedCoordinates = data.getFloatArrayExtra("adjusted_coordinates")
             val captureDuration = data.getLongExtra("capture_duration", 0L)
             val transformedDuration = data.getLongExtra("transform_duration", 0L)
-            originalCoordinates?.forEach {
+            /*originalCoordinates?.forEach {
                 Log.e(TAG, "original_coordinates: $it")
             }
             adjustedCoordinates?.forEach {
                 Log.e(TAG, "adjusted_coordinates: $it")
-            }
+            }*/
             setResult(RESULT_OK, Intent().apply {
                 putExtra("original_bytes", originalBytes)
                 putExtra("transformed_bytes", transformedBytes)
