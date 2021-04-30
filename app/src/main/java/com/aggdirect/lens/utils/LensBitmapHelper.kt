@@ -93,7 +93,7 @@ object LensBitmapHelper {
         val bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
         return bitmapToFile(
             bitmap,
-            LensAppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
+            context.filesDir,
             formatPNG
         )
     }

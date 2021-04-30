@@ -269,9 +269,13 @@ class LensPolyCropAct : AppCompatActivity() {
             transformed.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             val transformedBytes = stream.toByteArray()
 
+            val originalFile = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
+            val transformedFile =
+                LensBitmapHelper.bytesToFile(this@LensPolyCropAct, transformedBytes, false)
+
             setResult(RESULT_OK, Intent().apply {
-                putExtra("original_bytes", photoBytes)
-                putExtra("transformed_bytes", transformedBytes)
+                putExtra("original_file_path", originalFile.absolutePath)
+                putExtra("transformed_file_path", transformedFile.absolutePath)
                 putExtra("original_coordinates", originalCoordinates)
                 putExtra("adjusted_coordinates", adjustedCoordinates)
                 putExtra("capture_duration", captureDuration)

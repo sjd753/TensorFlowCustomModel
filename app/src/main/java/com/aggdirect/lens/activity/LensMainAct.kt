@@ -201,12 +201,15 @@ class LensMainAct : AppCompatActivity() {
                 e.printStackTrace()
             }
         } else if (requestCode == RC_APPLY_TRANSFORM && resultCode == Activity.RESULT_OK && data != null) {
-            val originalBytes = data.getByteArrayExtra("original_bytes")
-            val transformedBytes = data.getByteArrayExtra("transformed_bytes")
+            val originalFilePath = data.getStringExtra("original_file_path")
+            val transformedFilePath = data.getStringExtra("transformed_file_path")
             val originalCoordinates = data.getFloatArrayExtra("original_coordinates")
             val adjustedCoordinates = data.getFloatArrayExtra("adjusted_coordinates")
             val captureDuration = data.getLongExtra("capture_duration", 0L)
             val transformedDuration = data.getLongExtra("transform_duration", 0L)
+
+            Log.e(TAG, "originalFilePath: $originalFilePath")
+            Log.e(TAG, "transformedFilePath: $transformedFilePath")
             /*originalCoordinates?.forEach {
                 Log.e(TAG, "original_coordinates: $it")
             }
@@ -214,8 +217,8 @@ class LensMainAct : AppCompatActivity() {
                 Log.e(TAG, "adjusted_coordinates: $it")
             }*/
             setResult(RESULT_OK, Intent().apply {
-                putExtra("original_bytes", originalBytes)
-                putExtra("transformed_bytes", transformedBytes)
+                putExtra("original_file_path", originalFilePath)
+                putExtra("transformed_file_path", transformedFilePath)
                 putExtra("original_coordinates", originalCoordinates)
                 putExtra("adjusted_coordinates", adjustedCoordinates)
                 putExtra("capture_duration", captureDuration)
