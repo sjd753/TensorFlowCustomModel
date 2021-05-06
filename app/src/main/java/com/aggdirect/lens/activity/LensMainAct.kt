@@ -161,17 +161,20 @@ class LensMainAct : AppCompatActivity() {
 
                 // get bytes from compressed bitmap
                 val compressedPhotoBytes = LensBitmapHelper.compressedBitmapToByteArray(scaled, 100)
+                // save byte array as file
+                val originalFile =
+                    LensBitmapHelper.bytesToFile(this@LensMainAct, compressedPhotoBytes, false)
                 // start polygon crop activity
                 startActivity(Intent(this@LensMainAct, LensPolyCropAct::class.java).apply {
                     putExtra("float_array", floatArray)
-                    putExtra("photo_bytes", compressedPhotoBytes)
+                    putExtra("original_file_path", originalFile.absolutePath)
                 })
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             }
         } else if (requestCode == RC_CHOOSE_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
             try {
-                val scaledPhotoBytes = data.getByteArrayExtra("photo_bytes")
+                val originalFilePath = data.getStringExtra("original_file_path")
                 val scaledFloatArray = data.getFloatArrayExtra("float_array")
                 val captureDuration = data.getLongExtra("capture_duration", 0L)
                 Log.e(TAG, "float_array: ${scaledFloatArray?.toString()}")
@@ -179,7 +182,7 @@ class LensMainAct : AppCompatActivity() {
                     Log.e(TAG, "float_array: $it")
                 }
                 scaledFloatArray?.let {
-                    scaledPhotoBytes?.let {
+                    originalFilePath?.let {
                         // val scaled = LensBitmapHelper.bytesToBitmap(scaledPhotoBytes)
                         // get bytes from compressed bitmap
                         // val compressedPhotoBytes =
@@ -191,7 +194,7 @@ class LensMainAct : AppCompatActivity() {
                                 LensPolyCropAct::class.java
                             ).apply {
                                 putExtra("float_array", scaledFloatArray)
-                                putExtra("photo_bytes", scaledPhotoBytes)
+                                putExtra("original_file_path", originalFilePath)
                                 putExtra("capture_duration", captureDuration)
                             }, RC_APPLY_TRANSFORM
                         )

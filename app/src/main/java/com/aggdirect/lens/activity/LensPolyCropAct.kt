@@ -37,13 +37,13 @@ class LensPolyCropAct : AppCompatActivity() {
 
         if (intent.hasExtra("float_array") && intent.hasExtra("photo_bytes")) {
             val floatArray = intent.getFloatArrayExtra("float_array")!!
-            val photoBytes = intent.getByteArrayExtra("photo_bytes")!!
+            val originalFilePath = intent.getStringExtra("original_file_path")!!
             val captureDuration = intent.getLongExtra("capture_duration", 0L)
             frameLayout.post {
                 // scaling not needed anymore as float array is generated on scaled bitmap
                 // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
-                setPoints(floatArray, photoBytes)
+                setPoints(floatArray, originalFilePath)
 //                val pointFs = polygonView.points
 //                val originalCoordinates = floatArrayOf(
 //                    pointFs.getValue(0).x,
@@ -61,16 +61,16 @@ class LensPolyCropAct : AppCompatActivity() {
                     finish()
                 }
                 btnSaveOriginal.setOnClickListener {
-                    val file = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
+                    // val file = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
                     Toast.makeText(
                         this@LensPolyCropAct,
-                        "File saved at ${file.absolutePath}",
+                        "File saved at $originalFilePath",
                         Toast.LENGTH_LONG
                     ).show()
                 }
 
                 btnConfirm.setOnClickListener {
-                    val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
+                    val bitmap = BitmapFactory.decodeFile(originalFilePath)
                     val pointFs = polygonView.points
                     val adjustedCoordinates = floatArrayOf(
                         pointFs.getValue(0).x,
@@ -102,7 +102,7 @@ class LensPolyCropAct : AppCompatActivity() {
                     // Apply transformation on cropped bitmap
                     applyTransform(
                         croppedBitmap,
-                        photoBytes,
+                        originalFilePath,
                         originalCoordinates = floatArray,
                         adjustedCoordinates = adjustedCoordinates,
                         captureDuration = captureDuration
@@ -165,8 +165,8 @@ class LensPolyCropAct : AppCompatActivity() {
         return array
     }
 
-    private fun setPoints(scaledFloatArray: FloatArray, photoBytes: ByteArray) {
-        val bitmap = LensBitmapHelper.bytesToBitmap(photoBytes)
+    private fun setPoints(scaledFloatArray: FloatArray, filePath: String) {
+        val bitmap = BitmapFactory.decodeFile(filePath)
         ivImage.setImageBitmap(bitmap)
         if (scaledFloatArray.isEmpty() || scaledFloatArray.size != 8) throw IllegalArgumentException(
             "float array must contain 8 elements"
@@ -226,7 +226,7 @@ class LensPolyCropAct : AppCompatActivity() {
 
     private fun applyTransform(
         croppedBitmap: Bitmap,
-        photoBytes: ByteArray,
+        originalFilePath: String,
         originalCoordinates: FloatArray,
         adjustedCoordinates: FloatArray,
         captureDuration: Long
@@ -269,12 +269,12 @@ class LensPolyCropAct : AppCompatActivity() {
             transformed.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             val transformedBytes = stream.toByteArray()
 
-            val originalFile = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
+            // val originalFile = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)
             val transformedFile =
                 LensBitmapHelper.bytesToFile(this@LensPolyCropAct, transformedBytes, false)
 
             setResult(RESULT_OK, Intent().apply {
-                putExtra("original_file_path", originalFile.absolutePath)
+                putExtra("original_file_path", originalFilePath)
                 putExtra("transformed_file_path", transformedFile.absolutePath)
                 putExtra("original_coordinates", originalCoordinates)
                 putExtra("adjusted_coordinates", adjustedCoordinates)

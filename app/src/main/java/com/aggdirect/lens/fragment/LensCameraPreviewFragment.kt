@@ -91,6 +91,8 @@ class CameraPreviewFragment : Fragment() {
                         } else {
                             // get bytes from compressed bitmap
                             val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 100)
+                            // save byte array as file
+                            val originalFile = LensBitmapHelper.bytesToFile(activity, bytes, false)
                             // get duration
                             val duration = System.currentTimeMillis() - captureStartTime
                             // ser results and finish
@@ -98,7 +100,7 @@ class CameraPreviewFragment : Fragment() {
                                 Activity.RESULT_OK,
                                 Intent()
                                     .putExtra("float_array", floatArray)
-                                    .putExtra("photo_bytes", bytes)
+                                    .putExtra("original_file_path", originalFile.absolutePath)
                                     .putExtra("capture_duration", duration)
                             )
                             activity.finish()
@@ -108,6 +110,8 @@ class CameraPreviewFragment : Fragment() {
                         // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
                         // get bytes from compressed bitmap
                         val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 100)
+                        // save byte array as file
+                        val originalFile = LensBitmapHelper.bytesToFile(activity, bytes, false)
                         // get duration
                         val captureDuration = System.currentTimeMillis() - captureStartTime
                         // ser results and finish
@@ -115,7 +119,7 @@ class CameraPreviewFragment : Fragment() {
                             Activity.RESULT_OK,
                             Intent()
                                 .putExtra("float_array", floatArray)
-                                .putExtra("photo_bytes", bytes)
+                                .putExtra("original_file_path", originalFile.absolutePath)
                                 .putExtra("capture_duration", captureDuration)
                         )
                         activity.finish()
