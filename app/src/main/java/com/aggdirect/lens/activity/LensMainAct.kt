@@ -160,7 +160,7 @@ class LensMainAct : AppCompatActivity() {
                 val floatArray = detector.processTensor(this@LensMainAct, scaled)
 
                 // get bytes from compressed bitmap
-                val compressedPhotoBytes = LensBitmapHelper.compressedBitmapToByteArray(scaled, 70)
+                val compressedPhotoBytes = LensBitmapHelper.compressedBitmapToByteArray(scaled, 100)
                 // start polygon crop activity
                 startActivity(Intent(this@LensMainAct, LensPolyCropAct::class.java).apply {
                     putExtra("float_array", floatArray)
@@ -180,10 +180,10 @@ class LensMainAct : AppCompatActivity() {
                 }
                 scaledFloatArray?.let {
                     scaledPhotoBytes?.let {
-                        val scaled = LensBitmapHelper.bytesToBitmap(scaledPhotoBytes)
+                        // val scaled = LensBitmapHelper.bytesToBitmap(scaledPhotoBytes)
                         // get bytes from compressed bitmap
-                        val compressedPhotoBytes =
-                            LensBitmapHelper.compressedBitmapToByteArray(scaled, 70)
+                        // val compressedPhotoBytes =
+                        //    LensBitmapHelper.compressedBitmapToByteArray(scaled, 70)
                         // start polygon crop activity
                         startActivityForResult(
                             Intent(
@@ -191,7 +191,7 @@ class LensMainAct : AppCompatActivity() {
                                 LensPolyCropAct::class.java
                             ).apply {
                                 putExtra("float_array", scaledFloatArray)
-                                putExtra("photo_bytes", compressedPhotoBytes)
+                                putExtra("photo_bytes", scaledPhotoBytes)
                                 putExtra("capture_duration", captureDuration)
                             }, RC_APPLY_TRANSFORM
                         )

@@ -90,7 +90,7 @@ class CameraPreviewFragment : Fragment() {
                             }, 1000)
                         } else {
                             // get bytes from compressed bitmap
-                            val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                            val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 100)
                             // get duration
                             val duration = System.currentTimeMillis() - captureStartTime
                             // ser results and finish
@@ -107,7 +107,7 @@ class CameraPreviewFragment : Fragment() {
                         // merged bitmap
                         // val mergedBitmap = BitmapHelper.drawMergedBitmap(rawBitmap, drawnLinesBitmap)
                         // get bytes from compressed bitmap
-                        val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 70)
+                        val bytes = LensBitmapHelper.compressedBitmapToByteArray(rawBitmap, 100)
                         // get duration
                         val captureDuration = System.currentTimeMillis() - captureStartTime
                         // ser results and finish
