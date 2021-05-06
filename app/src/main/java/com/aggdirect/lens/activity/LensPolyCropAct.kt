@@ -19,7 +19,10 @@ import java.io.ByteArrayOutputStream
 
 
 class LensPolyCropAct : AppCompatActivity() {
-    private lateinit var croppedBitmap: Bitmap
+
+    companion object {
+        private val TAG: String = LensSplashAct::class.java.simpleName
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +38,7 @@ class LensPolyCropAct : AppCompatActivity() {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
 
-        if (intent.hasExtra("float_array") && intent.hasExtra("photo_bytes")) {
+        if (intent.hasExtra("float_array") && intent.hasExtra("original_file_path")) {
             val floatArray = intent.getFloatArrayExtra("float_array")!!
             val originalFilePath = intent.getStringExtra("original_file_path")!!
             val captureDuration = intent.getLongExtra("capture_duration", 0L)
