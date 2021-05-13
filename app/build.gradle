@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//apply plugin: 'maven-publish'
+// apply plugin: 'maven-publish'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.sjd753'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
 
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 61
         versionName "2.6.1"
         // for library module VERSION_CODE and VERSION_NAME has to be set manually
@@ -49,7 +49,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
     // opencv
     implementation project(path: ':sdk')
     testImplementation 'junit:junit:4.13.1'
@@ -63,15 +63,15 @@ dependencies {
     api 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
     api 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     // google cameraX dependencies
-    def camerax_version = "1.0.0-beta12"
+    def camerax_version = "1.1.0-alpha04"
     // CameraX core library using camera2 implementation
     api "androidx.camera:camera-camera2:$camerax_version"
     // CameraX Lifecycle Library
     api "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
-    api "androidx.camera:camera-view:1.0.0-alpha19"
+    api "androidx.camera:camera-view:1.0.0-alpha24"
     // exif interface
-    api 'androidx.exifinterface:exifinterface:1.3.1'
+    api 'androidx.exifinterface:exifinterface:1.3.2'
     // permission manager
     implementation 'com.github.buchandersenn:android-permission-manager:1.0.0'
     // glide
@@ -79,8 +79,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }
 
-
-/*project.afterEvaluate {
+/*
+project.afterEvaluate {
     publishing {
         publications {
             maven(MavenPublication) {
@@ -111,10 +111,11 @@ dependencies {
             }
         }
     }
-}*/
+}
+*/
 
 
-
+/*
 task createPom {
     pom {
         project {
@@ -155,9 +156,11 @@ task createPom {
             }
         }
     }.writeTo("pom.xml")
-}
+}*/
 
-//task copyLibs(type: Copy) {
-//    from configurations.api
-//    into 'libs'
-//}
+/*
+task copyLibs(type: Copy) {
+    from configurations.api
+    into 'libs'
+}
+*/
