@@ -61,8 +61,7 @@ object LensBitmapHelper {
                 LensAppFileManager.makeAppDir(context.getString(R.string.app_name))!!,
                 formatPNG
             )
-            val uri: Uri?
-            uri = if (Build.VERSION.SDK_INT >= N) {
+            val uri: Uri? = if (Build.VERSION.SDK_INT >= N) {
                 FileProvider.getUriForFile(
                     context,
                     context.packageName + context.getString(R.string.app_file_provider_name),
@@ -104,33 +103,7 @@ object LensBitmapHelper {
     }
 
     fun cropBitmapByPoints(bitmap: Bitmap, x: Int, y: Int, width: Int, height: Int): Bitmap {
-        //        val bitmap =  Bitmap.create
-
         return Bitmap.createBitmap(bitmap, x, y, width, height)
-
-        //        compositeImageView = (ImageView) findViewById (R.id.imageView);
-        //
-        //        Bitmap bitmap1 = BitmapFactory . decodeResource (getResources(), R.drawable.batman_ad);
-        //        Bitmap bitmap2 = BitmapFactory . decodeResource (getResources(), R.drawable.logo);
-        //
-        //        Bitmap resultingImage = Bitmap . createBitmap (320, 480, bitmap1.getConfig());
-        //
-        //        Canvas canvas = new Canvas(resultingImage);
-        //
-        //        Paint paint = new Paint();
-        //        paint.setAntiAlias(true);
-        //        Path path = new Path();
-        //        path.lineTo(150, 0);
-        //        path.lineTo(230, 120);
-        //        path.lineTo(70, 120);
-        //        path.lineTo(150, 0);
-        //
-        //        canvas.drawPath(path, paint);
-        //
-        //        paint.setXfermode(new PorterDuffXfermode (Mode.SRC_IN));
-        //        canvas.drawBitmap(bitmap2, 0, 0, paint);
-        //
-        //        compositeImageView.setImageBitmap(resultingImage);
     }
 
     fun drawLinesByPoints(bitmap: Bitmap, array: FloatArray): Bitmap {
@@ -178,8 +151,8 @@ object LensBitmapHelper {
 
         canvas.drawLines(arrayToDraw, paint)
 
-//        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
-//        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+        // paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
+        // canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
         return resultingImage
     }

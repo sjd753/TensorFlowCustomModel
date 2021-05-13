@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.aggdirect.lens.BuildConfig
 import com.aggdirect.lens.R
 import com.aggdirect.lens.opencv.perspectiveTransform
 import com.aggdirect.lens.utils.LensBitmapHelper
@@ -47,17 +48,7 @@ class LensPolyCropAct : AppCompatActivity() {
                 // val scaledFloatArray = getScaledPoints(floatArray, photoBytes)
                 // set point on the bitmap
                 setPoints(floatArray, originalFilePath)
-//                val pointFs = polygonView.points
-//                val originalCoordinates = floatArrayOf(
-//                    pointFs.getValue(0).x,
-//                    pointFs.getValue(0).y,
-//                    pointFs.getValue(1).x,
-//                    pointFs.getValue(1).y,
-//                    pointFs.getValue(2).x,
-//                    pointFs.getValue(2).y,
-//                    pointFs.getValue(3).x,
-//                    pointFs.getValue(3).y,
-//                )
+
                 // button click events
                 btnCancel.setOnClickListener {
                     setResult(RESULT_CANCELED)
@@ -87,15 +78,7 @@ class LensPolyCropAct : AppCompatActivity() {
                     )
                     val croppedBitmap =
                         LensBitmapHelper.drawBitmapByPoints(bitmap, adjustedCoordinates)
-                    /*val file = BitmapHelper.bitmapToFile(
-                        croppedBitmap,
-                        AppFileManager.makeAppDir(getString(R.string.app_name))!!
-                    )
-                    Toast.makeText(
-                        this@PolyCropAct,
-                        "File saved at ${file.absolutePath}",
-                        Toast.LENGTH_LONG
-                    ).show()*/
+
                     // set cropped bitmap and update buttons
                     // ivImage.setImageBitmap(croppedBitmap)
                     polygonView.visibility = View.GONE
@@ -110,35 +93,6 @@ class LensPolyCropAct : AppCompatActivity() {
                         adjustedCoordinates = adjustedCoordinates,
                         captureDuration = captureDuration
                     )
-                    /*AlertDialog.Builder(this@PolyCropAct).setMessage("Apply Perspective Transform?")
-                        .setPositiveButton("Apply") { dialog, which ->
-                            val transformed = croppedBitmap.perspectiveTransform(
-                                listOf(
-                                    Point(
-                                        pointFs.getValue(0).x.toDouble(),
-                                        pointFs.getValue(0).y.toDouble()
-                                    ),
-                                    Point(
-                                        pointFs.getValue(1).x.toDouble(),
-                                        pointFs.getValue(1).y.toDouble()
-                                    ),
-                                    Point(
-                                        pointFs.getValue(2).x.toDouble(),
-                                        pointFs.getValue(2).y.toDouble()
-                                    ),
-                                    Point(
-                                        pointFs.getValue(3).x.toDouble(),
-                                        pointFs.getValue(3).y.toDouble()
-                                    )
-                                )
-                            )
-                            ivImage.setImageBitmap(transformed)
-                        }
-                        .setNegativeButton("Cancel") { dialog, which ->
-                            dialog.dismiss()
-                        }
-                        .show()
-                    // EXPERIMENTAL CODE*/
                 }
             }
         }
@@ -162,8 +116,10 @@ class LensPolyCropAct : AppCompatActivity() {
                 array[index] = float * width / bitmap.width
             else
                 array[index] = float * projectedHeight / bitmap.height
-            Log.e("buffer $index", float.toString())
-            Log.e("computed buffer $index", array[index].toString())
+            if (BuildConfig.DEBUG) {
+                Log.e("buffer $index", float.toString())
+                Log.e("computed buffer $index", array[index].toString())
+            }
         }
         return array
     }
@@ -188,13 +144,6 @@ class LensPolyCropAct : AppCompatActivity() {
         ivImage.post {
             polygonView.points = pointFs
             polygonView.invalidate()
-
-            // val layoutParams = FrameLayout.LayoutParams(
-            //     ivImage.width,
-            //     ivImage.height
-            // )
-            // polygonView.layoutParams = layoutParams
-            // polygonView.requestLayout()
         }
     }
 
@@ -261,13 +210,6 @@ class LensPolyCropAct : AppCompatActivity() {
         btnApplyPT.visibility = View.GONE
         btnCancel.text = "Done"
         btnCancel.setOnClickListener {
-            // save original bitmap as file
-            // val originalFile = BitmapHelper.bytesToFile(this@PolyCropAct, photoBytes, false)
-            // save transformed bitmap as file
-            // val transformedFile = BitmapHelper.bitmapToFile(
-            //    transformed,
-            //    AppFileManager.makeAppDir(getString(R.string.app_name))!!
-            // )
             val stream = ByteArrayOutputStream()
             transformed.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             val transformedBytes = stream.toByteArray()

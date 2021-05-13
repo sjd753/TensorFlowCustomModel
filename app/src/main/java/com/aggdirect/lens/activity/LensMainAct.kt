@@ -98,7 +98,7 @@ class LensMainAct : AppCompatActivity() {
                     AlertDialog.Builder(this@LensMainAct).apply {
                         setMessage("Storage permission is required")
                         setCancelable(false)
-                        setPositiveButton("OK") { dialog, which ->
+                        setPositiveButton("OK") { _, _ ->
                             permissionRequest.acceptPermissionRationale()
                         }
                     }.show()
@@ -154,7 +154,7 @@ class LensMainAct : AppCompatActivity() {
                 val width = displayMetrics.widthPixels
 
                 val projectedHeight = width * bitmap.height / bitmap.width
-                Log.e("result", "projectedHeight h: $projectedHeight")
+                if (BuildConfig.DEBUG) Log.e("result", "projectedHeight h: $projectedHeight")
 
                 val scaled = Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
                 val floatArray = detector.processTensor(this@LensMainAct, scaled)
@@ -177,9 +177,12 @@ class LensMainAct : AppCompatActivity() {
                 val originalFilePath = data.getStringExtra("original_file_path")
                 val scaledFloatArray = data.getFloatArrayExtra("float_array")
                 val captureDuration = data.getLongExtra("capture_duration", 0L)
-                Log.e(TAG, "float_array: ${scaledFloatArray?.toString()}")
-                scaledFloatArray?.forEach {
-                    Log.e(TAG, "float_array: $it")
+
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, "float_array: ${scaledFloatArray?.toString()}")
+                    scaledFloatArray?.forEach {
+                        Log.e(TAG, "float_array: $it")
+                    }
                 }
                 scaledFloatArray?.let {
                     originalFilePath?.let {
@@ -211,14 +214,11 @@ class LensMainAct : AppCompatActivity() {
             val captureDuration = data.getLongExtra("capture_duration", 0L)
             val transformedDuration = data.getLongExtra("transform_duration", 0L)
 
-            Log.e(TAG, "originalFilePath: $originalFilePath")
-            Log.e(TAG, "transformedFilePath: $transformedFilePath")
-            /*originalCoordinates?.forEach {
-                Log.e(TAG, "original_coordinates: $it")
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "originalFilePath: $originalFilePath")
+                Log.e(TAG, "transformedFilePath: $transformedFilePath")
             }
-            adjustedCoordinates?.forEach {
-                Log.e(TAG, "adjusted_coordinates: $it")
-            }*/
+
             setResult(RESULT_OK, Intent().apply {
                 putExtra("original_file_path", originalFilePath)
                 putExtra("transformed_file_path", transformedFilePath)

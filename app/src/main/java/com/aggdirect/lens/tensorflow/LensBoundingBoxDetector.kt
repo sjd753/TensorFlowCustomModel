@@ -4,6 +4,7 @@ import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.aggdirect.lens.BuildConfig
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
@@ -106,8 +107,10 @@ class LensBoundingBoxDetector constructor(private val assetManager: AssetManager
                     array[index] = bufferResult * bitmap.width / DIM_IMG_SIZE_X
                 else
                     array[index] = bufferResult * bitmap.height / DIM_IMG_SIZE_Y
-                Log.e("buffer $index", bufferResult.toString())
-                Log.e("computed buffer $index", array[index].toString())
+                if (BuildConfig.DEBUG) {
+                    Log.e("buffer $index", bufferResult.toString())
+                    Log.e("computed buffer $index", array[index].toString())
+                }
             }
             tfliteInterpreter.close()
             return array
@@ -125,7 +128,7 @@ class LensBoundingBoxDetector constructor(private val assetManager: AssetManager
         for (i in array.indices) {
             array[i] = byteBuffer.getInt(i)
         }
-        Log.e("IntArray", array.map { it.toString() }.toString())
+        if (BuildConfig.DEBUG) Log.e("IntArray", array.map { it.toString() }.toString())
         return array
     }
 
@@ -133,7 +136,7 @@ class LensBoundingBoxDetector constructor(private val assetManager: AssetManager
         byteBuffer.rewind()
         val byteArray = ByteArray(byteBuffer.remaining())
         byteBuffer.get(byteArray)
-        Log.e("IntArray", byteArray.toString())
+        if (BuildConfig.DEBUG) Log.e("IntArray", byteArray.toString())
         return byteArray
     }
 }

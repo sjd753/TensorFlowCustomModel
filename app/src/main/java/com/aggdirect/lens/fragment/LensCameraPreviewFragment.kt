@@ -16,6 +16,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
+import com.aggdirect.lens.BuildConfig
 import com.aggdirect.lens.R
 import com.aggdirect.lens.tensorflow.LensBoundingBoxDetector
 import com.aggdirect.lens.utils.LensBitmapHelper
@@ -152,15 +153,6 @@ class CameraPreviewFragment : Fragment() {
                 view.btnFlash.setImageResource(drawable)
             }
         }
-
-//        view.btnGallery.setOnClickListener {
-//            val intent = Intent().apply {
-//                action = Intent.ACTION_VIEW
-//                type = "image/*"
-//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//            }
-//            startActivity(intent)
-//        }
 
         return view
     }
@@ -366,7 +358,7 @@ class CameraPreviewFragment : Fragment() {
             val width = displayMetrics.widthPixels
 
             val projectedHeight = width * bitmap.height / bitmap.width
-            Log.e("result", "projectedHeight h: $projectedHeight")
+            if (BuildConfig.DEBUG) Log.e("result", "projectedHeight h: $projectedHeight")
 
             return Bitmap.createScaledBitmap(bitmap, width, projectedHeight, true)
         }
@@ -375,11 +367,11 @@ class CameraPreviewFragment : Fragment() {
             Log.e(TAG, "analyze: image format: ${image.format}")
             when (image.format) {
                 ImageFormat.JPEG -> {
-                    Log.e(TAG, "analyze: image format: JPEG")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "analyze: image format: JPEG")
                     val bitmap = jpegProxyToBitmap(image)
                     // rotation degrees
                     val rotation = image.imageInfo.rotationDegrees
-                    Log.e(TAG, "analyze rotation: $rotation")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "analyze rotation: $rotation")
                     // find orientation and rotate if required
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
@@ -390,11 +382,11 @@ class CameraPreviewFragment : Fragment() {
                     listener(scaled)
                 }
                 ImageFormat.YUV_420_888 -> {
-                    Log.e(TAG, "analyze: image format: YUV_420_888")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "analyze: image format: YUV_420_888")
                     val bitmap = yuv420888ProxyToBitmap(image)
                     // rotation degrees
                     val rotation = image.imageInfo.rotationDegrees
-                    Log.e(TAG, "analyze rotation: $rotation")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "analyze rotation: $rotation")
                     // find orientation and rotate if required
                     // val orientation = BitmapHelper.findOrientation(compressedFile)
                     val rotatedBitmap =
