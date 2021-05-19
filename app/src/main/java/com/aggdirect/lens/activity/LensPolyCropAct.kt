@@ -210,6 +210,7 @@ class LensPolyCropAct : AppCompatActivity() {
         btnApplyPT.visibility = View.GONE
         btnCancel.text = "Done"
 
+        // option to rotate bitmap clockwise
         val angels = arrayOf(90f, 180f, 270f, 0f)
         var index = 0
 
