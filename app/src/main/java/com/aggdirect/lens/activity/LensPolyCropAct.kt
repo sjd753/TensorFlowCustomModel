@@ -209,9 +209,24 @@ class LensPolyCropAct : AppCompatActivity() {
         ivImage.setImageBitmap(transformed)
         btnApplyPT.visibility = View.GONE
         btnCancel.text = "Done"
+
+        val angels = arrayOf(90f, 180f, 270f, 0f)
+        var index = 0
+
+        var transformedRotated = transformed
+        fabRotate.show()
+        fabRotate.extend()
+        fabRotate.setOnClickListener {
+            fabRotate.shrink()
+            transformedRotated = LensBitmapHelper.rotateBitmap(transformed, angels[index])
+            ivImage.setImageBitmap(transformedRotated)
+            index++
+            if (index > angels.size - 1) index = 0
+        }
+
         btnCancel.setOnClickListener {
             val stream = ByteArrayOutputStream()
-            transformed.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            transformedRotated.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             val transformedBytes = stream.toByteArray()
 
             // val originalFile = LensBitmapHelper.bytesToFile(this@LensPolyCropAct, photoBytes, false)

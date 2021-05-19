@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
@@ -17,8 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:src="@drawable/sample_doc" />
+            android:adjustViewBounds="true" />
 
         <com.aggdirect.lens.extras.LensPolyCropLayout
             android:id="@+id/polygonView"
@@ -28,9 +28,11 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/layoutLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:background="@color/dark_grey"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -41,32 +43,32 @@
             android:layout_weight="1"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
-            android:textColor="@android:color/white"
             android:text="Cancel"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSaveOriginal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@android:color/white"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
             android:text="Save Original"
             android:textAllCaps="false"
-            android:visibility="invisible" />
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnConfirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@android:color/white"
             android:background="?selectableItemBackground"
             android:padding="@dimen/margin_16"
             android:text="Confirm"
             android:textAllCaps="false"
+            android:textColor="@android:color/white"
             android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -74,9 +76,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@android:color/white"
             android:backgroundTint="@color/colorAccent"
             android:text="Apply PT"
+            android:textColor="@android:color/white"
             android:visibility="gone" />
     </LinearLayout>
-</FrameLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabRotate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16"
+        android:text="Rotate"
+        android:visibility="gone"
+        app:backgroundTint="@color/light_grey"
+        app:icon="@drawable/ic_rotate_right"
+        app:layout_anchor="@id/layoutLinear"
+        app:layout_anchorGravity="end" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
